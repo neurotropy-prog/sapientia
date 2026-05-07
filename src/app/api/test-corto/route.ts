@@ -92,11 +92,16 @@ export async function POST(req: Request) {
 
   // 1. Persistencia (Supabase). Si falla, devolvemos el resultado igual.
   //    Clave primaria de unicidad: whatsapp (un lead, una fila — la última gana).
+  //    Schema dedicado `sapientia` en el proyecto Supabase `flow` para aislar
+  //    completamente del resto de tablas que ese proyecto pueda tener.
   try {
     const supabase = createClient(
       process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      { auth: { persistSession: false } },
+      {
+        auth: { persistSession: false },
+        db: { schema: 'sapientia' },
+      },
     )
     await supabase.from('short_test_responses').upsert(
       {
