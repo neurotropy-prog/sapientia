@@ -40,12 +40,9 @@ interface RequestBody {
   p5?: string
 }
 
-const AUDIENCE_BY_BUCKET: Record<Bucket, string | undefined> = {
-  ansiedad: process.env.RESEND_AUDIENCE_ANSIEDAD,
-  insomnio: process.env.RESEND_AUDIENCE_INSOMNIO,
-  fatiga: process.env.RESEND_AUDIENCE_FATIGA,
-  estres_cronico: process.env.RESEND_AUDIENCE_ESTRES,
-}
+// Resend ahora usa single audience + custom property "bucket" para segmentar.
+// El audienceId de "General" lo configuramos en RESEND_AUDIENCE_ID.
+const RESEND_AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID
 
 function isEmailValid(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
@@ -103,15 +100,17 @@ export async function POST(req: Request) {
     console.error('[test-corto] supabase_error', e)
   }
 
-  // 2. + 3. Resend: añadir a audiencia + enviar Day 0
+  // 2. + 3. Resend: añadir a audiencia con property bucket + enviar Day 0
   try {
     const resend = new Resend(process.env.RESEND_API_KEY!)
-    const audienceId = AUDIENCE_BY_BUCKET[result.bucket]
-    if (audienceId) {
+    if (RESEND_AUDIENCE_ID) {
+      // Idempotente — si ya existe el contacto Resend devuelve error que ignoramos
       await resend.contacts.create({
         email: body.email.trim().toLowerCase(),
-        audienceId,
+        audienceId: RESEND_AUDIENCE_ID,
         unsubscribed: false,
+        // @ts-expect-error — properties soportado en API actual de Resend, no tipado en el SDK
+        properties: { bucket: result.bucket },
       })
     }
     await resend.emails.send({
