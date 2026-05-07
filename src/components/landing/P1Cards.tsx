@@ -1,0 +1,203 @@
+'use client'
+
+/**
+ * P1Cards — Primera pregunta del gateway, visible en el hero sin botón intermedio.
+ * Fase 1: feedback visual al seleccionar. Transición a P2 se conecta en Fase 2.
+ * Emite evento 'scrollToP1' para el CTA del below-the-fold.
+ *
+ * Sprint 3: animateEntrance prop — question label + cards fade in with 150ms stagger.
+ */
+
+import { useState, useEffect, useCallback } from 'react'
+import { useCopy } from '@/lib/copy'
+
+const OPTION_IDS = ['A', 'B', 'C', 'D', 'E'] as const
+
+interface P1CardsProps {
+  /** Callback externo — activa el gateway cuando P1 está respondida */
+  onSelect?: (id: string) => void
+  /** Sprint 3: when true, cards animate in with stagger */
+  animateEntrance?: boolean
+}
+
+export default function P1Cards({ onSelect, animateEntrance = false }: P1CardsProps) {
+  const { getCopy } = useCopy()
+  const [selected, setSelected] = useState<string | null>(null)
+  const [isPulsing, setIsPulsing] = useState(false)
+  // Track which cards have been revealed (for stagger)
+  const [revealedCards, setRevealedCards] = useState<number>(-1)
+  // Track if the question label is revealed
+  const [labelRevealed, setLabelRevealed] = useState(false)
+
+  const questionText = getCopy('gateway.p1.question')
+  const options = OPTION_IDS.map(id => ({
+    id,
+    title: getCopy(`gateway.p1.option${id}.title`),
+    subtitle: getCopy(`gateway.p1.option${id}.subtitle`),
+  }))
+
+  // Escucha el evento del CTA de below-the-fold para hacer pulse
+  useEffect(() => {
+    const handler = () => {
+      setIsPulsing(true)
+      const timer = setTimeout(() => setIsPulsing(false), 500)
+      return () => clearTimeout(timer)
+    }
+    window.addEventListener('scrollToP1', handler)
+    return () => window.removeEventListener('scrollToP1', handler)
+  }, [])
+
+  // Stagger entrance when animateEntrance becomes true
+  useEffect(() => {
+    if (!animateEntrance) return
+
+    // Label appears first
+    setLabelRevealed(true)
+
+    // Cards stagger in 150ms apart, starting 100ms after label
+    const timers: ReturnType<typeof setTimeout>[] = []
+    options.forEach((_, i) => {
+      timers.push(setTimeout(() => setRevealedCards(i), 100 + i * 150))
+    })
+
+    return () => timers.forEach(clearTimeout)
+  }, [animateEntrance])
+
+  const handleSelect = useCallback((id: string) => {
+    if (selected === id) return
+    setSelected(id)
+    // Delay de 600ms — la persona ve su selección confirmada antes de que aparezca el gateway
+    setTimeout(() => onSelect?.(id), 600)
+  }, [selected, onSelect])
+
+  return (
+    <div
+      id="p1-section"
+      className={isPulsing ? 'p1-pulse' : ''}
+      style={{ width: '100%' }}
+    >
+      {/* Pregunta — centrada */}
+      <p
+        className={animateEntrance ? `hero-reveal${labelRevealed ? ' hero-animate-fade-in' : ''}` : ''}
+        style={{
+          fontFamily: 'var(--font-host-grotesk)',
+          fontSize: 'var(--text-h3)',
+          lineHeight: 'var(--lh-h3)',
+          letterSpacing: 'var(--ls-h3)',
+          fontWeight: 500,
+          color: 'var(--color-text-primary)',
+          marginBottom: 'var(--space-5)',
+          textAlign: 'center',
+        }}
+      >
+        {questionText}
+      </p>
+
+      {/* Cards — centradas con max-width */}
+      <div
+        role="radiogroup"
+        aria-label={questionText}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--space-2)',
+          maxWidth: '640px',
+          margin: '0 auto',
+        }}
+      >
+        {options.map((option, index) => {
+          const isSelected = selected === option.id
+          const shouldAnimate = animateEntrance
+          const isRevealed = !shouldAnimate || index <= revealedCards
+          return (
+            <button
+              key={option.id}
+              role="radio"
+              aria-checked={isSelected}
+              onClick={() => handleSelect(option.id)}
+              className={shouldAnimate ? `p1-card-reveal${isRevealed ? ' p1-card-animate' : ''}` : ''}
+              style={{
+                width: '100%',
+                textAlign: 'left',
+                background: isSelected
+                  ? 'var(--color-accent-subtle)'
+                  : 'var(--color-bg-secondary)',
+                border: isSelected
+                  ? '1px solid var(--color-accent)'
+                  : 'var(--border-subtle)',
+                borderRadius: 'var(--radius-lg)',
+                padding: 'var(--space-3) var(--space-5)',
+                cursor: selected && !isSelected ? 'default' : 'pointer',
+                transition:
+                  'background var(--transition-fast), border-color var(--transition-fast), opacity 200ms ease',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                gap: 'var(--space-4)',
+                minHeight: '44px',
+                /* Dimming: unselected cards fade when one is selected */
+                opacity: selected && !isSelected ? 0.5 : 1,
+                pointerEvents: selected && !isSelected ? 'none' : 'auto',
+                /* Pulse: selected card gets spring scale animation */
+                animation: isSelected ? 'selectPulse 300ms cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
+              }}
+            >
+              <div style={{ flex: 1 }}>
+                <p
+                  style={{
+                    fontFamily: 'var(--font-host-grotesk)',
+                    fontSize: 'var(--text-body)',
+                    lineHeight: 'var(--lh-body)',
+                    fontWeight: 600,
+                    color: 'var(--color-text-primary)',
+                    marginBottom: 'var(--space-1)',
+                  }}
+                >
+                  {option.title}
+                </p>
+                <p
+                  style={{
+                    fontFamily: 'var(--font-host-grotesk)',
+                    fontSize: 'var(--text-body-sm)',
+                    lineHeight: 'var(--lh-body-sm)',
+                    fontStyle: 'italic',
+                    color: 'var(--color-text-secondary)',
+                  }}
+                >
+                  {option.subtitle}
+                </p>
+              </div>
+
+              {/* Checkmark — solo visible al seleccionar */}
+              <div
+                style={{
+                  flexShrink: 0,
+                  width: '20px',
+                  height: '20px',
+                  marginTop: '2px',
+                  opacity: isSelected ? 1 : 0,
+                  transition: 'opacity var(--transition-fast)',
+                }}
+                aria-hidden="true"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  stroke="var(--color-accent)"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="10" cy="10" r="9" />
+                  <path d="M6.5 10.5l2.5 2.5 4.5-5" />
+                </svg>
+              </div>
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}

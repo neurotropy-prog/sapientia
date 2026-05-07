@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Ops — Command Center</title>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --surface-2: #1e1e1e;
+    --surface-3: #282828;
+    --border: #2a2a2a;
+    --text: #e5e5e5;
+    --text-2: #a0a0a0;
+    --text-3: #666;
+    --accent: #f97316;
+    --accent-dim: #f9731633;
+    --green: #22c55e;
+    --green-dim: #22c55e22;
+    --yellow: #eab308;
+    --yellow-dim: #eab30822;
+    --red: #ef4444;
+    --red-dim: #ef444422;
+    --blue: #3b82f6;
+    --blue-dim: #3b82f622;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 24px;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+  }
+
+  header h1 span { color: var(--accent); }
+
+  .meta {
+    font-size: 13px;
+    color: var(--text-3);
+  }
+
+  /* Stats bar */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+
+  .stat-card .label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-3);
+    margin-bottom: 8px;
+  }
+
+  .stat-card .value {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -1px;
+  }
+
+  .stat-card .sub {
+    font-size: 12px;
+    color: var(--text-2);
+    margin-top: 4px;
+  }
+
+  /* Alerts */
+  .alerts {
+    margin-bottom: 24px;
+  }
+
+  .alert {
+    background: var(--red-dim);
+    border: 1px solid #ef444444;
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+  }
+
+  .alert.warning {
+    background: var(--yellow-dim);
+    border-color: #eab30844;
+  }
+
+  .alert-icon { font-size: 16px; }
+
+  /* Project cards */
+  .projects { display: flex; flex-direction: column; gap: 16px; }
+
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .project-card:hover { border-color: var(--accent); }
+
+  .project-header {
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    cursor: pointer;
+  }
+
+  .project-name {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .project-desc {
+    font-size: 13px;
+    color: var(--text-2);
+  }
+
+  .project-badge {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  .badge-active { background: var(--green-dim); color: var(--green); }
+  .badge-paused { background: var(--yellow-dim); color: var(--yellow); }
+  .badge-completed { background: var(--blue-dim); color: var(--blue); }
+
+  .project-progress {
+    padding: 0 24px 16px;
+  }
+
+  .progress-bar {
+    height: 6px;
+    background: var(--surface-3);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #fb923c);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-3);
+  }
+
+  /* Sprint details (expandable) */
+  .project-details {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 20px 24px;
+  }
+
+  .project-card.expanded .project-details { display: block; }
+
+  .sprint-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .sprint-item {
+    background: var(--surface-2);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+  }
+
+  .sprint-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .sprint-name {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .sprint-status {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+
+  .status-completed { background: var(--green-dim); color: var(--green); }
+  .status-in_progress { background: var(--accent-dim); color: var(--accent); }
+  .status-pending { background: var(--surface-3); color: var(--text-3); }
+
+  .task-list { display: flex; flex-direction: column; gap: 6px; }
+
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    padding: 8px 12px;
+    background: var(--bg);
+    border-radius: 6px;
+  }
+
+  .task-check {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+
+  .task-check.completed {
+    background: var(--green);
+    border-color: var(--green);
+    color: var(--bg);
+  }
+
+  .task-check.in_progress {
+    border-color: var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  .task-check.blocked {
+    border-color: var(--red);
+    background: var(--red-dim);
+  }
+
+  .task-title { flex: 1; }
+  .task-title.completed { text-decoration: line-through; color: var(--text-3); }
+
+  /* Prompt modal */
+  .prompt-btn {
+    font-size: 11px;
+    padding: 4px 10px;
+    background: var(--surface-3);
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .prompt-btn:hover {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.active { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    width: 90%;
+    max-width: 700px;
+    max-height: 80vh;
+    overflow: auto;
+    padding: 24px;
+  }
+
+  .modal h3 {
+    margin-bottom: 16px;
+    font-size: 16px;
+  }
+
+  .modal pre {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    color: var(--text-2);
+  }
+
+  .modal .copy-btn {
+    margin-top: 12px;
+    padding: 10px 20px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+    width: 100%;
+    transition: opacity 0.2s;
+  }
+
+  .modal .copy-btn:hover { opacity: 0.9; }
+  .modal .copy-btn.copied { background: var(--green); }
+
+  .close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--text-3);
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  /* Next action banner */
+  .next-action {
+    background: var(--accent-dim);
+    border: 1px solid #f9731644;
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .next-action-text h3 {
+    font-size: 14px;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .next-action-text p {
+    font-size: 14px;
+    color: var(--text-2);
+  }
+
+  .next-action-btn {
+    padding: 10px 20px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    font-size: 13px;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .container { padding: 16px; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .project-header { flex-direction: column; gap: 8px; }
+    .next-action { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div>
+      <h1>Project <span>Ops</span></h1>
+      <div class="meta" id="lastUpdated"></div>
+    </div>
+    <div class="meta" id="totalProjects"></div>
+  </header>
+
+  <div id="statsBar" class="stats"></div>
+  <div id="alertsContainer" class="alerts"></div>
+  <div id="nextAction"></div>
+  <div id="projectsContainer" class="projects"></div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<script>
+const DATA = {"registry":{"version":"1.0","last_updated":"2026-03-30T12:00:00Z","projects":[{"slug":"lars","name":"L.A.R.S.©","description":"Sistema de adquisición del Programa LARS para ejecutivos con burnout","status":"active","current_sprint":6,"total_sprints":23,"total_tasks":23,"completed_tasks":6,"progress_percent":26,"created_at":"2026-03-21T00:00:00Z","updated_at":"2026-03-30T12:00:00Z","repo_path":"/sessions/intelligent-stoic-hypatia/mnt/lars-project","deploy_url":"https://lars.institutoepigenetico.com","tech_stack":"Next.js 15 + Supabase + TypeScript + Vercel","alerts":[]}]},"projects":[{"slug":"lars","name":"L.A.R.S.©","description":"Sistema de adquisición del Programa LARS para ejecutivos con burnout","status":"active","created_at":"2026-03-21T00:00:00Z","updated_at":"2026-03-30T12:00:00Z","repo_path":"/sessions/intelligent-stoic-hypatia/mnt/lars-project","deploy_url":"https://lars.institutoepigenetico.com","tech_stack":"Next.js 15 + Supabase + TypeScript + Vercel","docs":{"vision":"docs/VISION.md","design":"docs/DESIGN.md","features_dir":"docs/features/","progress":"docs/PROGRESS.md"},"sprints":[{"index":0,"name":"Google Auth — Login admin con Google","description":"Reemplazar ADMIN_SECRET por Google OAuth via Supabase Auth. Solo 2 emails autorizados: javier@institutoepigenetico.com y alex@withowners.com. Página de login, middleware, helper verifyAdmin(), logout.","status":"completed","started_at":"2026-03-21T00:00:00Z","completed_at":"2026-03-22T00:00:00Z","estimated_sessions":1,"tasks":[{"id":"google-auth","title":"Autenticación admin con Google OAuth via Supabase Auth","description":"Tabla admin_users (2 emails), página /admin/login con botón Google, middleware que protege /admin/*, helper verifyAdmin() reutilizable, actualizar todas las API routes, botón logout en header, eliminar ADMIN_SECRET después de verificar.","status":"pending","dependencies":[],"prompt_file":"prompts/session-google-auth.md","prompt_content":"","started_at":null,"completed_at":null,"blocked_reason":null,"notes":"Requiere configuración manual: Google Cloud Console OAuth Client + Supabase Dashboard Provider. DEBE ser la primera sesión porque todas las demás usan el admin."}]},{"index":1,"name":"Editor de Copy — Backend + Defaults + API","description":"Archivo centralizado de defaults de todo el copy (landing + gateway + mapa), tabla copy_overrides en Supabase, API routes para CRUD, helper de copy para componentes, y estructura base de la página /admin/copy","status":"completed","started_at":"2026-03-22T00:00:00Z","completed_at":"2026-03-23T00:00:00Z","estimated_sessions":1,"tasks":[{"id":"copy-editor-1","title":"Copy defaults + migración BD + API + página admin base","description":"Crear src/lib/copy-defaults.ts con TODO el copy editable (landing hero/mirror/tension/socialproof/relief + gateway P1-P8/primera verdad/micro-espejos + mapa focus/aspiracional/evoluciones). Migración para tabla copy_overrides. API /api/admin/copy (GET/POST/DELETE) + /api/copy (pública con cache). Helper src/lib/copy.ts (getCopy, useCopy, getCopyServer). Página /admin/copy con tabs Landing|Gateway|Mapa y entry en sidebar.","status":"pending","dependencies":[],"prompt_file":"prompts/session-copy-editor-1-backend.md","prompt_content":"","started_at":null,"completed_at":null,"blocked_reason":null,"notes":"Replica el patrón de email-defaults.ts + email_templates. Sin dependencias — se puede ejecutar ya."}]},{"index":2,"name":"Editor de Copy — Frontend + Integración","description":"UX completa del editor con acordeón por sección, preview en vivo, auto-save, búsqueda, restaurar. Integración de componentes públicos (landing, gateway, mapa) para leer overrides de Supabase.","status":"completed","started_at":"2026-03-23T00:00:00Z","completed_at":"2026-03-24T00:00:00Z","estimated_sessions":1,"tasks":[{"id":"copy-editor-2","title":"Editor UX completo + preview en vivo + integración frontend público","description":"CopyEditor.tsx con acordeón colapsable por subsección, campos editables con label+hint, indicador de personalizado, auto-save con debounce 1.5s, búsqueda instantánea, restaurar individual y por sección. Preview en vivo al lado (desktop) con tipografía y colores reales. Modificar TODOS los componentes públicos (HeroSection, MirrorSection, TensionSection, SocialProofSection, ReliefSection, Footer, gateway-bloque1-data, gateway-bloque2-data, FocusBanner, AspiracionalTimeline, evoluciones del mapa) para leer overrides via getCopy/useCopy. Badge de personalización en sidebar.","status":"pending","dependencies":["copy-editor-1"],"prompt_file":"prompts/session-copy-editor-2-frontend.md","prompt_content":"","started_at":null,"completed_at":null,"blocked_reason":null,"notes":"Cambios en componentes públicos son TRANSPARENTES — sin overrides todo se ve idéntico."}]},{"index":3,"name":"AMPLIFY — Backend + BD","description":"Tabla amplify_invites, 5 API routes, lógica de insight comparativo, detección ?ref= en gateway","status":"completed","started_at":"2026-03-24T00:00:00Z","completed_at":"2026-03-25T00:00:00Z","estimated_sessions":1,"tasks":[{"id":"amplify-1","title":"AMPLIFY Backend: migración BD + API routes + insight engine","description":"Tabla amplify_invites, 5 API routes (invite, status, accept, decline, compare), lógica de generateComparisonInsight(), detección de ?ref= en gateway","status":"pending","dependencies":[],"prompt_file":"prompts/session-amplify-1-backend.md","prompt_content":"","started_at":null,"completed_at":null,"blocked_reason":null,"notes":""}]},{"index":4,"name":"AMPLIFY — Frontend Invitación","description":"Sección AMPLIFY en mapa, modal compartir, banner aceptación, email día 7","status":"completed","started_at":"2026-03-25T00:00:00Z","completed_at":"2026-03-26T00:00:00Z","estimated_sessions":1,"tasks":[{"id":"amplify-2","title":"AMPLIFY Frontend: invitación + compartir + aceptación","description":"Sección en mapa vivo (día 7+), modal de invitación con WhatsApp/email/link, banner de aceptación para invitados, bloque en email día 7","status":"pending","dependencies":["amplify-1"],"prompt_file":"prompts/session-amplify-2-frontend-invite.md","prompt_content":"","started_at":null,"completed_at":null,"blocked_reason":null,"notes":""}]},{"index":5,"name":"AMPLIFY — Vista Comparativa + Admin","description":"Página de comparación con barras paralelas, insight dinámico, CTA. Card AMPLIFY en Hub, badge en LAM, métricas en Analytics","status":"completed","started_at":"2026-03-26T00:00:00Z","completed_at":"2026-03-27T00:00:00Z","estimated_sessions":1,"tasks":[{"id":"amplify-3","title":"AMPLIFY Vista comparativa + integración admin","description":"Página /mapa/[hash]/comparar/[compare_hash] con barras paralelas animadas, insight dinámico, CTA. Card AMPLIFY en Hub, badge Referido en LAM, métricas en Analytics","status":"pending","dependencies":["amplify-2"],"prompt_file":"prompts/session-amplify-3-compare-admin.md","prompt_content":"","started_at":null,"completed_at":null,"blocked_reason":null,"notes":""}]},{"index":6,"name":"Feedback-A: Terminología Global + Textos por Defecto","description":"Renombrar Arquetipo→Mecanismo de defensa adaptativo, rumiación→Obsesividad mental, Mapa de Regulación→neuroregulación, actualizar defaults de copy, fix gateway.p5.optionC, cambios de copy en preguntas, reestructurar sección nivel de regulación","status":"pending","started_at":null,"completed_at":null,"estimated_sessions":1,"tasks":[{"id":"feedback-a-terminologia","title":"Cambios de terminología global y textos por defecto","description":"7 cambios de texto/terminología en toda la app: renombrar Arquetipo, rumiación, Mapa de Regulación, actualizar defaults, fix p5 options, cambios de copy en preguntas, reestructurar nivel de regulación","status":"pending","dependencies":[],"prompt_file":"prompts/session-feedback-A-terminologia.md","prompt_content":"## Contexto\nProyecto: L.A.R.S.©\nSesión Feedback-A: Terminología Global + Textos por Defecto — Renombrar conceptos en todo el sistema, actualizar copy por defecto, y corregir errores de traducción.\n\nEsta sesión viene de un feedback del director del programa (Javier). Son cambios de texto y terminología que afectan a TODA la aplicación: landing, gateway, mapa vivo, admin, y los defaults del copy editor.\n\n## Documentos fundamentales (LEER ANTES de empezar)\nEstos docs definen la visión, para quién construimos, por qué, y cómo:\n- docs/VISION.md — Visión del producto: problema, solución, límites.\n- docs/PROFILES.md — Perfiles PROFUNDOS del cliente ideal (7 capas + 10 fuerzas).\n  Construye para ESTA persona concreta, no para un \"usuario\" genérico.\n- docs/MOVEMENT.md — Mapa de movimiento completo del usuario en su journey.\n- docs/GATEWAY.md — Puerta de entrada: experiencia de 3-5 min que transforma.\n- docs/DESIGN.md — Sistema de diseño. NADA se inventa fuera de este doc.\n\n## Lo que ya está construido\n- Landing + Gateway + Mapa Vivo + Emails + Booking + Analytics (todo en producción)\n- Admin v2 con Copy Editor, LAM, Hub, Agenda, Analytics Enhanced\n- Sistema AMPLIFY de referidos\n- Copy Editor con auto-save y preview en vivo\n\n## Tu tarea\n\nEsta sesión tiene 7 cambios de terminología y copy. Todos son de búsqueda y reemplazo masivo por toda la aplicación (frontend público, admin, defaults de copy, base de datos si aplica).\n\n### Cambio 1: \"Arquetipo del sistema nervioso\" → \"Mecanismo de defensa adaptativo\"\nBuscar y reemplazar TODAS las variantes en TODO el proyecto:\n- \"Arquetipos del sistema nervioso\" → \"Mecanismos de defensa adaptativo\" (plural)\n- \"Arquetipo del sistema nervioso\" → \"Mecanismo de defensa adaptativo\" (singular)\n- \"TU ARQUETIPO DEL SISTEMA NERVIOSO\" → \"MECANISMO DE DEFENSA ADAPTATIVO\" (mayúsculas)\n- \"Tu arquetipo\" → \"Tu mecanismo de defensa\" (forma corta si existe)\n- \"Arquetipo\" → \"Mecanismo de defensa adaptativo\" (cuando se usa como concepto aislado)\n- En el admin/panel de control: \"Arquetipo\" en labels, headers, columnas → \"Mecanismo de defensa adaptativo\"\n\n**CUIDADO:** No reemplaces ciegamente. Revisa cada contexto. \"Arquetipo\" puede aparecer como nombre de variable, key de BD, etc. — esos NO se cambian. Solo cambia el texto visible al usuario y los defaults de copy.\n\nDonde dice \"Descubrir tu perfil completo\" en el botón del mapa → cambiar a \"Descubrir tu mecanismo de defensa completo\". El label \"NUEVO DESDE TU ÚLTIMA VISITA / TU ARQUETIPO DEL SISTEMA NERVIOSO\" → \"NUEVO DESDE TU ÚLTIMA VISITA / MECANISMO DE DEFENSA ADAPTATIVO\".\n\n### Cambio 2: \"rumiación\" / \"rumiar\" → \"Obsesividad mental\"\nBuscar en todo el proyecto (copy defaults, textos del gateway, descripciones de perfiles, mapa, admin):\n- \"rumiación\" → \"obsesividad mental\"\n- \"Rumiación\" → \"Obsesividad mental\"\n- \"rumiar\" → \"obsesividad mental\" (adaptar gramática según contexto)\n- \"La rumiación ES hiperactivación cognitiva\" → \"La obsesividad mental ES hiperactivación cognitiva\"\n\n### Cambio 3: \"Tu Mapa de Regulación\" → \"Tu mapa de neuroregulación\"\nBuscar y reemplazar en todo el proyecto:\n- \"Tu Mapa de Regulación\" → \"Tu mapa de neuroregulación\"\n- \"Mapa de Regulación\" → \"Mapa de neuroregulación\"\n- \"mapa de regulación\" → \"mapa de neuroregulación\"\nRevisar titles, headings, meta tags, breadcrumbs, sidebar links, emails.\n\n### Cambio 4: Actualizar textos por defecto del copy (evitar flash en reload)\nEn `src/lib/copy-defaults.ts` (o donde estén centralizados los defaults del copy editor), los textos por defecto deben coincidir con los textos que Javier ya ha editado vía el copy editor. Actualmente, al hacer reload de la página se ve por un instante el texto original antes de cargar el override de Supabase.\n\n**Solución:** Los textos actuales editados en Supabase (tabla `copy_overrides`) se convierten en los NUEVOS defaults hardcodeados en `copy-defaults.ts`. Así el texto inicial ya es el correcto y no hay flash.\n\nPara implementar esto:\n1. Consulta la tabla `copy_overrides` y lista todos los overrides actuales.\n2. Para cada override, actualiza el valor en `copy-defaults.ts`.\n3. Opcionalmente, limpia los overrides de Supabase que ahora coinciden con el default.\n4. Verifica que al recargar la página NO haya flash de texto diferente.\n\n### Cambio 5: Corregir error \"gateway.p5.optionC\" y \"gateway.p5.optionD\"\nEn la pregunta 5 del gateway (\"¿Cuándo fue la última vez que disfrutaste algo de verdad...\"), las opciones C y D muestran la key de traducción cruda (\"gateway.p5.optionC\") en vez del texto real. Localiza dónde están definidas estas opciones y asegúrate de que todas tienen su texto asignado correctamente. Probablemente falta el mapping en el archivo de datos del gateway o en copy-defaults.\n\n### Cambio 6: Cambios de copy en sección de preguntas del gateway\nEn la sección de la pregunta \"¿Cuál de estas frases podrías haber dicho tú esta semana?\" (la pregunta de síntomas del gateway):\n\n**Cambiar el título de la pregunta:**\n- DE: \"¿Cuál de estas frases podrías haber dicho tú esta semana?\"\n- A: \"¿Qué síntomas estás expresando de forma cotidiana?\"\n\n**Cambiar los textos contextuales entre preguntas:**\n- DE: \"La reactividad emocional no es un defecto de carácter. Es la respuesta de un cerebro que ha agotado los recursos para regular.\"\n- A: \"Estos son los síntomas más comunes de las personas que han agotado sus recursos bioquímicos y emocionales para lidiar con la altísima demanda que requiere la vida actual.\"\n\n- DE: \"Esta es la pregunta que más tarda en responderse. Tómate tu tiempo.\"\n- A: \"Responde con sinceridad y sin culpa. Estás aquí porque eres consciente y buscas mejorar que es más de lo que la inmensa mayoría hace.\"\n\n**Además:** En esta sección, el usuario debe poder seleccionar MÁS DE UNA respuesta (multi-select), igual que funciona en la pregunta \"¿Reconoces alguna de estas señales en tu día a día?\". Si actualmente es single-select, convertirla a multi-select.\n\n### Cambio 7: Sección \"Tu nivel de regulación\" — Añadir contexto\nEn la pantalla de resultados, la sección que muestra el score (ej: \"38 de 100 — Moderado\") y el número comparativo (\"72\") no queda clara. Hay que reestructurar así:\n\n**TU NIVEL DE REGULACIÓN**\n**38** de 100 — Moderado\n\n**Personas que empezaron en este rango:**\nEl **69%** de las personas mejoraron un 12-18% sus niveles en las primeras 72 h. del programa e incrementaron > 35% sus resultados al completar el proceso de neuroregulación.\n\nLas que actuaron en la primera semana avanzaron un 34% más rápido que las que esperaron un mes.\n\nBusca este bloque en el componente de resultados y asegúrate de que el texto quede exactamente así (incluyendo el bold en \"69%\").\n\n---\n\nAntes de escribir código:\n1. Dime qué archivos encontraste con cada término a reemplazar (un resumen, no cada línea).\n2. Dime tu plan para el cambio 4 (actualizar defaults desde copy_overrides).\n3. Espera mi aprobación.\n\n## Reglas críticas\n- NO modifiques la base de datos sin avisarme antes.\n- TODO el diseño viene de docs/DESIGN.md. No inventes valores.\n- Recuerda: no soy desarrollador. Explícame todo en lenguaje simple.\n- NUNCA ejecutes `npm run build` — usa `npx tsc --noEmit` para verificar tipos.\n- Para desplegar: `git push`. Vercel hace el build.\n\n## Validación obligatoria (ANTES de cada commit)\n\nIMPORTANTE: No hagas commit de nada sin completar TODAS estas verificaciones.\n\n### 1. Tipos y compilación\n- Ejecuta `npx tsc --noEmit` — cero errores, cero warnings.\n\n### 2. Seguridad\n- Cero secrets/API keys/tokens hardcodeados — todo en .env.local.\n\n### 3. Calidad del código\n- Cero console.log de debug, código comentado, o TODOs sin resolver.\n- Nombres descriptivos en inglés.\n\n### 4. Testing funcional\n- Verificar que TODAS las páginas donde cambiaste texto siguen funcionando:\n  - Landing completa: hero, mirror, tension, social proof, relief, footer.\n  - Gateway: todas las preguntas P1-P8, primera verdad, micro-espejos.\n  - Resultados: score, perfil, mapa borroso.\n  - Mapa vivo: FocusBanner, evoluciones, timeline.\n  - Admin: copy editor, hub, LAM, analytics.\n- Verificar que NO hay flash de texto por defecto al recargar (cambio 4).\n- Verificar que la opción C y D de P5 muestran texto real (cambio 5).\n- Verificar que la pregunta de síntomas permite multi-select (cambio 6).\n\n### 5. Diseño y UX\n- Verificar que los nuevos textos no rompen layouts (textos más largos que los originales).\n- \"Mecanismo de defensa adaptativo\" es más largo que \"Arquetipo\" — verificar que cabe en cards, badges, headers, mobile.\n\n## Actualización de progreso\nDespués de completar:\n1. Actualiza `docs/PROGRESS.md` con resumen de lo construido.\n2. Commit final limpio con mensaje descriptivo.","started_at":null,"completed_at":null,"blocked_reason":null,"notes":"Feedback Javier 30 Mar 2026 — puntos 1, 12, 13, 17, 20, 23-25"}]},{"index":7,"name":"Feedback-B: Landing Visual Fixes","description":"Logo sin transparencia, footer con links legales, eliminar ornamentos decorativos, testimonios rediseñados, colores corregidos de stats y botones","status":"pending","started_at":null,"completed_at":null,"estimated_sessions":1,"tasks":[{"id":"feedback-b-landing-visual","title":"Correcciones visuales en la landing page","description":"8 fixes visuales: logo #cd796c sin transparencia, footer legal, eliminar ornamentos, testimonios fondo #fbf8f4 sin esfera sin números con nombre, stats fondo #2d4134, botón evaluación #2d4134","status":"pending","dependencies":[],"prompt_file":"prompts/session-feedback-B-landing-visual.md","prompt_content":"## Contexto\nProyecto: L.A.R.S.©\nSesión Feedback-B: Landing Visual Fixes — Correcciones visuales en la landing page (logo, footer, testimonios, colores, ornamentos).\n\nEsta sesión viene de un feedback del director del programa (Javier). Son correcciones puramente visuales de la landing page.\n\n## Documentos fundamentales (LEER ANTES de empezar)\n- docs/VISION.md — Visión del producto.\n- docs/PROFILES.md — Perfiles del cliente ideal.\n- docs/MOVEMENT.md — Mapa de movimiento del usuario.\n- docs/GATEWAY.md — Puerta de entrada.\n- docs/DESIGN.md — Sistema de diseño. NADA se inventa fuera de este doc.\n\n## Lo que ya está construido\n- Landing + Gateway + Mapa Vivo + Emails + Booking + Analytics (todo en producción)\n- Admin v2 completo\n- Sistema AMPLIFY\n\n## Tu tarea\n\n8 correcciones visuales en la landing page. Todas son CSS/markup, sin lógica nueva.\n\n### Fix 1: Logo con transparencia\nEl logo del Instituto Epigenético aparece \"aclarado\" o con transparencia al inicio de la carga. Correcciones:\n- Eliminar cualquier efecto de transparencia, opacity, o fade-in del logo.\n- El color del logo debe ser **#cd796c** (sólido, sin transparencia).\n- Debe verse nítido y con su color correcto desde el primer render.\n\n### Fix 2: Footer — Links legales\nAñadir al footer los siguientes links:\n- Aviso legal → https://institutoepigenetico.com/aviso-legal\n- Términos y condiciones → https://institutoepigenetico.com/terminos-y-condiciones\n- Política de privacidad y cookies → https://institutoepigenetico.com/politica-de-privacidad\n- Contacto → https://institutoepigenetico.com/contacto\n- \"2026 © Instituto Epigenético™\" como texto de copyright\n\nFormato: links en una línea separados por \"|\", con el copyright debajo. Tipografía pequeña, color discreto sobre el fondo oscuro. Seguir docs/DESIGN.md para sizing y color.\n\n### Fix 3: Eliminar ornamentos de fondo decorativos\nEn la landing hay elementos decorativos de fondo (círculos grandes con gradiente/blur) que aparecen detrás de ciertas secciones (visibles en la zona del doctor y las credenciales, y en la zona de testimonios). **Elimínalos por completo.** Son los elementos marcados con \"X\" en el feedback visual.\n\nBusca en los componentes de la landing: elementos con `blur`, `radial-gradient`, círculos decorativos posicionados con `absolute`, formas SVG puramente decorativas. Elimínalos. El fondo debe ser limpio.\n\n### Fix 4: Testimonios — Color de fondo de las cards\nLas cards de testimonios (\"Experiencias reales\") tienen un fondo que NO es de la paleta. Cambiar:\n- El color de fondo de las cards de testimonios a **#fbf8f4** (beige cálido de la paleta).\n- **NO usar #f1e9f5** (morado) ni ningún otro color fuera de docs/DESIGN.md.\n- Eliminar cualquier numeración (1, 2, 3) que aparezca sobre las cards.\n\n### Fix 5: Testimonios — Eliminar esfera/icono de comillas\nArriba de cada card de testimonio hay un icono de esfera con comillas (\"\"). **Elimínalo.**\n\nLa card de testimonio debe quedar así (maqueta de referencia):\n```\n┌─────────────────────────────┐\n│                             │\n│  \"No le conté a nadie que   │\n│  lo hice. Los datos me      │\n│  explicaron lo que yo no    │\n│  quería ver.\"               │\n│                             │\n│  ┌──────────┐               │\n│  │ CEO, 52  │               │\n│  └──────────┘               │\n│                             │\n└─────────────────────────────┘\n```\n- Fondo: #fbf8f4\n- Texto del testimonio en itálica o normal según DESIGN.md\n- Badge con cargo y edad en la esquina inferior\n\n### Fix 6: Testimonios — Añadir nombre con inicial de apellido\nDespués del texto de cada testimonio, añadir el nombre y la primera letra del apellido. Ejemplo:\n\n\"No le conté a nadie que lo hice. Los datos me explicaron lo que yo no quería ver.\" **Javier M.**\n\n- El nombre va en **bold** después de la cita.\n- Formato: \"Nombre I.\" (nombre + primera letra del apellido + punto)\n- Los nombres son datos ficticios por ahora. Usa nombres realistas españoles.\n\n### Fix 7: Módulo estadísticas \"73%\" — Color de fondo\nEl módulo que muestra \"73% de ejecutivos con burnout no lo saben\" tiene un fondo rojizo/rosado. Cambiar a:\n- Color de fondo: **#2d4134** (verde oscuro de la paleta).\n- Texto: blanco.\n- Verificar que el texto es legible sobre ese fondo.\n\n### Fix 8: Botón \"Seguir con mi evaluación\" — Estilo\nEl botón \"Seguir con mi evaluación →\" que aparece después de \"Lo que revelan tus respuestas\":\n- Texto: **blanco**\n- Fondo: **#2d4134**\n- Verificar que tiene hover state y se siente como un botón clicable.\n\n---\n\nAntes de escribir código:\n1. Dime en qué componentes encontraste cada elemento a corregir.\n2. Muéstrame tu plan de cambios archivo por archivo.\n3. Espera mi aprobación.\n\n## Reglas críticas\n- NO modifiques la base de datos sin avisarme antes.\n- TODO el diseño viene de docs/DESIGN.md. No inventes valores.\n- Colores permitidos: los de DESIGN.md + los específicos de este feedback (#cd796c, #fbf8f4, #2d4134).\n- NUNCA ejecutes `npm run build` — usa `npx tsc --noEmit` para verificar tipos.\n- Para desplegar: `git push`. Vercel hace el build.\n- Recuerda: no soy desarrollador. Explícame todo en lenguaje simple.\n\n## Validación obligatoria (ANTES de cada commit)\n\n### 1. Tipos y compilación\n- Ejecuta `npx tsc --noEmit` — cero errores, cero warnings.\n\n### 2. Calidad del código\n- Cero console.log de debug, código comentado, o TODOs sin resolver.\n\n### 3. Testing funcional\n- Verificar visualmente TODA la landing en móvil (375px) y desktop:\n  - Logo nítido sin transparencia en color #cd796c.\n  - Footer con los 4 links + copyright.\n  - Sin ornamentos decorativos de fondo.\n  - Cards de testimonios con fondo #fbf8f4, sin icono de comillas, con nombre en bold.\n  - Módulo 73% con fondo #2d4134 y texto blanco.\n  - Botón \"Seguir con mi evaluación\" con fondo #2d4134 y texto blanco.\n\n### 4. Diseño y UX\n- Mobile-first: todo funciona perfectamente en 375px.\n- Sin colores fuera de la paleta.\n- Sin ornamentos decorativos.\n- Testimonios limpios y legibles.\n\n## Actualización de progreso\nDespués de completar:\n1. Actualiza `docs/PROGRESS.md` con resumen de lo construido.\n2. Commit final limpio con mensaje descriptivo.","started_at":null,"completed_at":null,"blocked_reason":null,"notes":"Feedback Javier 30 Mar 2026 — puntos 2, 5, 6, 7, 8, 9, 10, 11"}]},{"index":8,"name":"Feedback-C: Gateway UX Fixes","description":"Fix botón Volver, tick marks en sliders, rediseño pantalla preload, eliminar todos los degradados","status":"pending","started_at":null,"completed_at":null,"estimated_sessions":1,"tasks":[{"id":"feedback-c-gateway-ux","title":"Correcciones de UX en el gateway","description":"3 fixes: botón Volver que funcione correctamente, tick marks de regla en sliders, preload limpio sin blur/gradients + eliminar todos los degradados del diseño","status":"pending","dependencies":[],"prompt_file":"prompts/session-feedback-C-gateway-ux.md","prompt_content":"## Contexto\nProyecto: L.A.R.S.©\nSesión Feedback-C: Gateway UX Fixes — Correcciones de experiencia en el gateway (navegación, sliders, preload, gradientes).\n\nEsta sesión viene de un feedback del director del programa (Javier). Son correcciones de UX y diseño en el flujo del gateway.\n\n## Documentos fundamentales (LEER ANTES de empezar)\n- docs/VISION.md — Visión del producto.\n- docs/PROFILES.md — Perfiles del cliente ideal.\n- docs/MOVEMENT.md — Mapa de movimiento del usuario.\n- docs/GATEWAY.md — Puerta de entrada: experiencia de 3-5 min que transforma.\n- docs/DESIGN.md — Sistema de diseño. NADA se inventa fuera de este doc.\n- docs/ANIMATIONS.md — Specs técnicas de animaciones (A-01 a A-15).\n\n## Lo que ya está construido\n- Landing + Gateway completo (P1-P8, primera verdad, micro-espejos, bisagra, email, resultados)\n- Sistema de scoring y perfiles\n- Mapa vivo con evoluciones\n- Admin con copy editor y gestión de respuestas\n\n## Tu tarea\n\n3 correcciones de UX en el gateway.\n\n### Fix 1: Botón \"Volver\" no funciona correctamente\nCuando el usuario hace clic en \"Volver\" durante el test (después de haber respondido alguna pregunta), NO regresa a la pregunta anterior. Debe:\n1. Volver a la pregunta inmediatamente anterior manteniendo la respuesta ya seleccionada.\n2. Si el usuario está en P3, al dar \"Volver\" debe ir a P2 con su respuesta previa visible.\n3. La transición debe ser suave (misma animación que al avanzar pero en reversa).\n4. Si está en P1 (primera pregunta), el botón \"Volver\" no debe aparecer o debe llevar al hero.\n\nRevisa el componente del gateway que maneja la navegación entre preguntas. Probablemente es un estado de step/index que no se decrementa correctamente o que pierde el estado de las respuestas.\n\n### Fix 2: Sliders — Marcas de escala (tick marks)\nEn la pregunta \"En una escala del 1 al 10, ¿cómo calificarías cada una de estas áreas?\" (la pregunta de sliders/barras), añadir:\n- Pequeñas rayas verticales en **gris claro** que dividen cada barra/slider en **10 unidades** (como una regla).\n- La raya central (posición 5) debe ser **un poquito más larga** que las demás para ser fácilmente identificable.\n- Las rayas son sutiles (no deben competir con el slider activo). Color sugerido: usar el color de border o un gris sutil de DESIGN.md.\n\nEsto es puramente visual — no cambia la lógica del slider. Es para que el usuario tenga referencia visual de las unidades.\n\n### Fix 3: Pantalla de preload \"Calculando tu perfil de regulación...\"\nLa pantalla de carga que aparece mientras se calculan los resultados tiene problemas:\n\n1. **Eliminar el rectángulo con objeto desenfocado/borroso** del fondo. Actualmente hay un rectángulo redondeado con un elemento difuminado dentro que parece un error de diseño. Eliminar ese rectángulo completo.\n2. **Eliminar TODOS los degradados** (gradients) de esta pantalla y de toda la zona de resultados. Javier no quiere degradados en ninguna parte del diseño. Buscar en CSS: `linear-gradient`, `radial-gradient`, `gradient` — si son decorativos, eliminarlos.\n3. **Rediseñar como un preload limpio** usando colores de docs/DESIGN.md:\n   - Fondo: color de fondo principal del sistema de diseño (#0B0F0E o la superficie correspondiente).\n   - Texto \"Calculando tu perfil de regulación...\" centrado, tipografía de DESIGN.md.\n   - Un indicador de carga sutil: puede ser un pulso suave, una barra de progreso fina, o el SVG del pulso cardíaco (A-01 de ANIMATIONS.md) si ya existe.\n   - Sin blur, sin degradados, sin objetos de fondo decorativos.\n\n4. **Revisar TODA la zona de resultados** (no solo el preload) y eliminar CUALQUIER degradado que encuentres. El director fue claro: \"No quiero degradados en el diseño en ningún sitio.\" Esto incluye:\n   - La sección \"Tu nivel de regulación\" — sin degradados.\n   - Las barras de las dimensiones — sin degradados.\n   - Los fondos de cualquier card de resultados — sin degradados.\n   - Si hay degradados en otras partes del gateway, eliminarlos también.\n\n---\n\nAntes de escribir código:\n1. Muéstrame dónde está la lógica de navegación del gateway (el \"Volver\").\n2. Identifica qué componente renderiza los sliders.\n3. Identifica la pantalla de preload y lista todos los elementos con gradient/blur.\n4. Espera mi aprobación.\n\n## Reglas críticas\n- NO modifiques la base de datos sin avisarme antes.\n- TODO el diseño viene de docs/DESIGN.md. No inventes valores.\n- CERO degradados (gradients) en el diseño. Colores sólidos siempre.\n- NUNCA ejecutes `npm run build` — usa `npx tsc --noEmit` para verificar tipos.\n- Para desplegar: `git push`. Vercel hace el build.\n- Recuerda: no soy desarrollador. Explícame todo en lenguaje simple.\n\n## Validación obligatoria (ANTES de cada commit)\n\n### 1. Tipos y compilación\n- Ejecuta `npx tsc --noEmit` — cero errores, cero warnings.\n\n### 2. Testing funcional\n- Verificar el botón \"Volver\":\n  - Desde P2 → vuelve a P1 con respuesta previa.\n  - Desde P5 → vuelve a P4 con respuesta previa.\n  - Desde P8 → vuelve a P7 con respuesta previa.\n  - Transición suave, sin saltos.\n- Verificar sliders:\n  - 10 tick marks visibles por barra.\n  - Tick central (5) ligeramente más largo.\n  - Visible en móvil sin saturar.\n- Verificar preload:\n  - Sin rectángulo borroso.\n  - Sin degradados.\n  - Texto legible, indicador de carga visible.\n- Verificar resultados:\n  - CERO degradados en toda la zona de resultados.\n\n### 3. Diseño y UX\n- Mobile-first: todo en 375px funciona perfectamente.\n- Sin degradados en ningún sitio.\n- Preload limpio y coherente con el sistema de diseño.\n- Sliders con tick marks sutiles pero visibles.\n\n## Actualización de progreso\nDespués de completar:\n1. Actualiza `docs/PROGRESS.md` con resumen de lo construido.\n2. Commit final limpio con mensaje descriptivo.","started_at":null,"completed_at":null,"blocked_reason":null,"notes":"Feedback Javier 30 Mar 2026 — puntos 3, 15, 16"}]},{"index":9,"name":"Feedback-D: Resultados Gateway — Perfil + WOW","description":"Mostrar Mecanismo de defensa adaptativo en resultados con efecto WOW, fix botón Descubrir perfil, reestructurar sección nivel de regulación","status":"pending","started_at":null,"completed_at":null,"estimated_sessions":1,"tasks":[{"id":"feedback-d-resultados-perfil","title":"Perfil en resultados del gateway con efecto WOW + fixes","description":"3 cambios: añadir sección Mecanismo de defensa adaptativo en resultados para enganchar al cliente, fix botón Descubrir perfil que no funciona, reestructurar bloque nivel de regulación con contexto comparativo","status":"pending","dependencies":["feedback-a-terminologia"],"prompt_file":"prompts/session-feedback-D-resultados-perfil.md","prompt_content":"## Contexto\nProyecto: L.A.R.S.©\nSesión Feedback-D: Resultados del Gateway — Perfil + WOW — Los resultados deben mostrar el \"Mecanismo de defensa adaptativo\" como pieza central para enganchar al usuario, y el botón \"Descubrir tu perfil completo\" debe funcionar.\n\nEsta sesión viene de un feedback del director del programa (Javier). El problema: los resultados del gateway solo muestran valores/números, pero no enganchan emocionalmente. El director quiere que el \"Mecanismo de defensa adaptativo\" (antes \"Arquetipo\") sea la pieza WOW que enganche al cliente con su perfil.\n\n## Documentos fundamentales (LEER ANTES de empezar)\n- docs/VISION.md — Visión del producto.\n- docs/PROFILES.md — Perfiles del cliente ideal. Los 4 perfiles (PC, FI, CE, CP).\n- docs/MOVEMENT.md — Mapa de movimiento. **Los resultados son el punto Clarity → Confidence.**\n- docs/GATEWAY.md — Puerta de entrada. Sección de resultados y mecánica de revelación.\n- docs/DESIGN.md — Sistema de diseño. NADA se inventa fuera de este doc.\n- docs/features/FEATURE_GATEWAY_DESIGN.md — Diseño detallado del gateway con scoring.\n\n## Lo que ya está construido\n- Gateway completo con 8 preguntas, scoring, perfil detectado\n- Resultados con score de regulación, dimensiones, mapa borroso\n- Mapa vivo con FocusBanner, sección de \"Mecanismo de defensa\" (antes \"Arquetipo\")\n- Botón \"Descubrir tu perfil completo\" en el mapa (actualmente NO funciona)\n\n## Tu tarea\n\n3 cambios en la experiencia de resultados del gateway y mapa.\n\n### Cambio 1: Mostrar el \"Mecanismo de defensa adaptativo\" en los resultados del gateway\n**Contexto del director:** \"Los resultados muestran solo los valores. Quiero que muestre también el Mecanismo de defensa adaptativo. El resultado si esto no tiene un efecto WOW, dependemos de que vea el email o haya un seguimiento. Quiero enganchar al cliente con el perfil.\"\n\nActualmente los resultados del gateway muestran:\n- Score de regulación (ej: 38/100)\n- Las 5 dimensiones con sus valores\n- Mapa borroso + CTA email\n\n**Lo que hay que AÑADIR** después del score y ANTES del mapa borroso:\n\nUna sección de \"Tu mecanismo de defensa adaptativo\" que muestre:\n- El nombre del mecanismo detectado (ej: \"El Obsesivo\", \"El Controlador\", etc.)\n- Una descripción breve pero impactante de ese mecanismo (2-3 líneas que le hagan decir \"esto soy yo\").\n- Por qué su sistema nervioso adoptó este mecanismo (1-2 líneas de contexto neurocientífico).\n\n**Esta sección debe tener efecto WOW.** Es el momento donde la persona se ve reflejada. Usa el sistema de revelación del gateway (aparición progresiva, no todo de golpe). El texto del mecanismo ya debería existir en la lógica de perfiles — busca en los datos de perfiles/arquetipos.\n\n**IMPORTANTE:** Esta información ya existe en el sistema (en los datos de perfiles del gateway). No hay que inventar contenido nuevo — hay que MOSTRARLO en los resultados en vez de guardárselo solo para el mapa.\n\n### Cambio 2: Fix \"Descubrir tu perfil completo\" → Que funcione\nEl botón \"Descubrir tu perfil completo\" en el mapa vivo (la card que dice \"NUEVO DESDE TU ÚLTIMA VISITA / MECANISMO DE DEFENSA ADAPTATIVO / El Obsesivo / [descripción] / Descubrir tu mecanismo de defensa completo →\") actualmente **no hace nada al hacer clic.**\n\nCorregir:\n1. Identificar qué acción debería ejecutar ese botón.\n2. Si debería expandir el contenido para mostrar el perfil completo → implementar la expansión con animación.\n3. Si debería navegar a otra sección → implementar el scroll/navegación.\n4. El contenido expandido debe mostrar el perfil completo del mecanismo de defensa: descripción detallada, cómo se manifiesta, y qué patrones genera.\n\n**Nota:** Ahora el label debe decir \"Descubrir tu mecanismo de defensa completo\" (ya no \"perfil completo\"), y el header dice \"MECANISMO DE DEFENSA ADAPTATIVO\" (no \"TU ARQUETIPO DEL SISTEMA NERVIOSO\"). Si la sesión A de terminología aún no se ha ejecutado, haz estos cambios de texto aquí también.\n\n### Cambio 3: Sección \"Tu nivel de regulación\" — Reestructurar contenido\nLa sección de resultados que muestra el score y la comparación con otras personas no queda clara. Reestructurar así:\n\n**Bloque 1: Tu score**\n```\nTU NIVEL DE REGULACIÓN\n38 de 100 — Moderado\n```\n\n**Bloque 2: Contexto comparativo** (separado visualmente del score)\n```\nPersonas que empezaron en este rango:\n\nEl 69% de las personas mejoraron un 12-18% sus niveles en las primeras\n72 h. del programa e incrementaron > 35% sus resultados al completar\nel proceso de neuroregulación.\n\nLas que actuaron en la primera semana avanzaron un 34% más rápido\nque las que esperaron un mes.\n```\n\n- El \"69%\" va en **bold**.\n- Sin degradados. Fondo sólido.\n- La separación entre bloques debe ser clara — que se entienda que el bloque 2 habla de otras personas, no de ti.\n- El texto \"72\" suelto (que aparecía antes como \"El promedio de personas en tu situación que empezaron a regularse: 72\") desaparece — se integra en el contexto narrativo.\n\n---\n\nAntes de escribir código:\n1. Dime dónde están los datos de los mecanismos de defensa (nombres, descripciones).\n2. Muéstrame el componente actual de resultados y dónde insertarías la nueva sección.\n3. Identifica qué hace (o debería hacer) el botón \"Descubrir tu perfil completo\".\n4. Espera mi aprobación.\n\n## Reglas críticas\n- NO modifiques la base de datos sin avisarme antes.\n- TODO el diseño viene de docs/DESIGN.md. No inventes valores.\n- CERO degradados en el diseño. Colores sólidos.\n- La experiencia de resultados es CRÍTICA para la conversión. Es el momento Clarity → Confidence del journey.\n- NUNCA ejecutes `npm run build` — usa `npx tsc --noEmit`.\n- Para desplegar: `git push`. Vercel hace el build.\n- Recuerda: no soy desarrollador. Explícame todo en lenguaje simple.\n\n## Validación obligatoria (ANTES de cada commit)\n\n### 1. Tipos y compilación\n- Ejecuta `npx tsc --noEmit` — cero errores, cero warnings.\n\n### 2. Testing funcional\n- Completar el gateway entero y verificar:\n  - El mecanismo de defensa adaptativo aparece en los resultados con nombre y descripción.\n  - El efecto de revelación funciona (aparición progresiva, no todo de golpe).\n  - El botón \"Descubrir tu mecanismo de defensa completo\" en el mapa FUNCIONA (abre contenido o navega).\n  - La sección \"Tu nivel de regulación\" muestra el texto reestructurado correctamente.\n  - Sin degradados en ninguna parte.\n\n### 3. Diseño y UX\n- Mobile-first 375px.\n- La sección del mecanismo de defensa genera efecto WOW (revelación progresiva).\n- Los dos bloques de \"Tu nivel de regulación\" están claramente separados.\n- El botón del mapa funciona y da feedback al clic.\n\n## Actualización de progreso\nDespués de completar:\n1. Actualiza `docs/PROGRESS.md` con resumen de lo construido.\n2. Commit final limpio con mensaje descriptivo.","started_at":null,"completed_at":null,"blocked_reason":null,"notes":"Feedback Javier 30 Mar 2026 — puntos 16, 18, 24. Depende de sesión A para la terminología correcta."}]},{"index":10,"name":"Feedback-E: Admin Fixes","description":"Copy editor sin auto-refresh con botón Guardar, editor de respuestas gateway consistente, textos del mapa editables desde admin","status":"pending","started_at":null,"completed_at":null,"estimated_sessions":1,"tasks":[{"id":"feedback-e-admin-fixes","title":"Correcciones del panel de administración","description":"3 fixes: copy editor con botón Guardar explícito que mantiene posición, editor de respuestas gateway con estructura consistente sin duplicados, textos del mapa de neuroregulación editables desde admin","status":"pending","dependencies":[],"prompt_file":"prompts/session-feedback-E-admin-fixes.md","prompt_content":"## Contexto\nProyecto: L.A.R.S.©\nSesión Feedback-E: Admin Fixes — Correcciones en el panel de administración (copy editor UX, editor de respuestas del gateway, textos editables del mapa).\n\nEsta sesión viene de un feedback del director del programa (Javier). Son correcciones de UX y funcionalidad del panel de administración.\n\n## Documentos fundamentales (LEER ANTES de empezar)\n- docs/VISION.md — Visión del producto.\n- docs/PROFILES.md — Perfiles del cliente ideal.\n- docs/DESIGN.md — Sistema de diseño. NADA se inventa fuera de este doc.\n\n## Lo que ya está construido\n- Admin v2 completo: Hub, LAM, Copy Editor, Analytics, Agenda, Automations\n- Copy Editor con auto-save, preview en vivo, y override tracking\n- Sistema de respuestas del gateway administrable\n- Mapa vivo con FocusBanner, evoluciones, y AspiracionalTimeline\n\n## Tu tarea\n\n3 correcciones del admin.\n\n### Fix 1: Copy Editor — Auto-refresh rompe la edición\n**Problema:** Cuando Javier cambia un texto en el copy editor, la sección se refresca automáticamente a los pocos segundos. Esto hace difícil la edición porque pierde el foco y la posición.\n\n**Solución requerida:**\n1. **Eliminar el auto-save con debounce** (o hacerlo opt-in). El guardado actual con debounce de 1.5s provoca que el componente se re-renderice mientras el usuario está editando.\n2. **Añadir un botón \"Guardar\"** explícito por sección o por campo. El usuario hace cambios y cuando está satisfecho, pulsa \"Guardar\".\n3. **Después de guardar, mantener la sección abierta** y el scroll en la misma posición. Actualmente, después de guardar (o del auto-save), la vista vuelve a la primera sección del acordeón. El usuario debe quedarse EXACTAMENTE donde estaba.\n4. **Feedback visual del guardado:** Al pulsar \"Guardar\", mostrar confirmación (ej: \"Guardado ✓\" durante 2 segundos) sin mover la vista.\n\n**Implementación sugerida:**\n- Mantener el estado \"dirty\" (modificado) por campo. Mostrar indicador de cambio pendiente.\n- Botón \"Guardar\" aparece solo cuando hay cambios pendientes.\n- Al guardar: llamada a la API, actualizar estado, mostrar confirmación, NO re-renderizar el acordeón ni mover scroll.\n- Opcionalmente: botón \"Guardar todos los cambios\" si hay múltiples campos modificados.\n\n### Fix 2: Editor de respuestas del gateway — Estructura inconsistente\n**Problema:** En el admin, la sección para editar las respuestas del gateway (Primera Verdad, Micro-espejo 1, Micro-espejo 2, etc.) tiene una estructura de edición inconsistente:\n- No todas las preguntas tienen la misma estructura de campos.\n- Se repiten textos que no corresponden a la respuesta concreta que se está editando.\n- El texto \"Tu mente no se apaga ya que el estrés crónico...\" se repite en varias respuestas cuando NO debería (solo debería estar en la que corresponde).\n- Es confuso saber qué campo corresponde a qué parte de la experiencia.\n\n**Solución requerida:**\n1. **Auditar la estructura de datos** de las respuestas del gateway. Cada respuesta posible de cada pregunta debe tener UN solo set de textos asociados (micro-espejo, primera verdad, explicación).\n2. **Estandarizar la interfaz de edición:** Cada respuesta debe mostrar exactamente:\n   - El texto de la pregunta (como contexto, no editable en esta vista).\n   - La opción de respuesta (como contexto).\n   - Los campos editables asociados a ESA respuesta específica.\n3. **Eliminar textos duplicados** que se muestran en respuestas donde no corresponden.\n4. **Revisar también Micro-espejo 1 y Micro-espejo 2** — probablemente tienen el mismo problema de textos repetidos.\n\n**IMPORTANTE:** Este fix puede requerir cambios en la estructura de datos del copy-defaults o de la lógica que mapea respuestas a textos. Si necesitas cambiar el esquema, AVISAME ANTES.\n\n### Fix 3: Textos del \"Mapa de neuroregulación\" editables desde admin\n**Problema:** Los textos de la sección \"Tu Mapa de neuroregulación\" (antes \"Tu Mapa de Regulación\") no son editables desde el admin. Javier necesita poder cambiar los textos de esta sección.\n\n**Solución:**\n1. Identificar TODOS los textos de la sección del mapa que deberían ser editables:\n   - Títulos de secciones (FocusBanner, evoluciones, timeline)\n   - Textos descriptivos\n   - Labels y CTAs\n   - Textos de cada evolución (día 0, día 3, día 7, día 14, día 21...)\n2. Añadir estos textos al sistema de copy-defaults (en `src/lib/copy-defaults.ts` o equivalente) bajo un nuevo grupo \"mapa\" o ampliar el grupo existente.\n3. Añadir la sección en la interfaz del copy editor del admin (nuevo tab o nueva sección dentro del tab \"Mapa\").\n4. Integrar los componentes del mapa para leer overrides vía el sistema de copy existente (getCopy/useCopy).\n\n---\n\nAntes de escribir código:\n1. Muéstrame el componente actual del CopyEditor y cómo funciona el auto-save.\n2. Muéstrame la estructura actual del editor de respuestas del gateway.\n3. Lista qué textos del mapa ya están en copy-defaults y cuáles no.\n4. Espera mi aprobación.\n\n## Reglas críticas\n- NO modifiques la base de datos sin avisarme antes (especialmente el esquema de copy_overrides).\n- TODO el diseño viene de docs/DESIGN.md. No inventes valores.\n- El admin es la herramienta de Javier. Debe ser intuitivo sin documentación.\n- NUNCA ejecutes `npm run build` — usa `npx tsc --noEmit`.\n- Para desplegar: `git push`. Vercel hace el build.\n- Recuerda: no soy desarrollador. Explícame todo en lenguaje simple.\n\n## Validación obligatoria (ANTES de cada commit)\n\n### 1. Tipos y compilación\n- Ejecuta `npx tsc --noEmit` — cero errores, cero warnings.\n\n### 2. Seguridad\n- API routes del copy editor siguen protegidas con autenticación admin.\n\n### 3. Testing funcional\n- **Copy Editor:**\n  - Abrir una sección, editar un campo → NO se refresca automáticamente.\n  - Pulsar \"Guardar\" → texto se guarda, sección sigue abierta, scroll no se mueve.\n  - Indicador \"Guardado ✓\" aparece brevemente.\n  - Recargar página → el texto guardado persiste.\n- **Editor de respuestas:**\n  - Cada respuesta muestra SOLO sus textos asociados (sin duplicados).\n  - Primera Verdad, Micro-espejo 1 y 2: estructura consistente.\n  - Editar un texto → se guarda correctamente y se refleja en el gateway público.\n- **Mapa editable:**\n  - Los nuevos textos aparecen en el copy editor.\n  - Editarlos cambia lo que se ve en el mapa público.\n  - Sin override, el mapa se ve exactamente igual que antes (transparente).\n\n### 4. Diseño y UX\n- El botón \"Guardar\" se siente natural en el flujo de edición.\n- La estructura de respuestas del gateway es clara y consistente.\n- La nueva sección de mapa en el copy editor sigue el mismo patrón visual que las demás.\n\n## Actualización de progreso\nDespués de completar:\n1. Actualiza `docs/PROGRESS.md` con resumen de lo construido.\n2. Commit final limpio con mensaje descriptivo.","started_at":null,"completed_at":null,"blocked_reason":null,"notes":"Feedback Javier 30 Mar 2026 — puntos 4, 14, 19"}]},{"index":11,"name":"Feedback-F: Mapa Vivo — Programa + Contenido","description":"Programa completo 12 semanas en el mapa, contenido Semana 1, sesión Javier inmediata, extracto libro descargable","status":"pending","started_at":null,"completed_at":null,"estimated_sessions":1,"tasks":[{"id":"feedback-f-mapa-programa","title":"Programa completo y contenido en el mapa vivo","description":"4 cambios: acordeón con programa completo 12 semanas (3 fases), contenido detallado Semana 1 (Dr. Alvear + MNN + Protocolo Sueño), CTA sesión Javier disponible inmediatamente tras test, extracto libro PDF descargable administrable desde admin","status":"pending","dependencies":["feedback-a-terminologia"],"prompt_file":"prompts/session-feedback-F-mapa-programa.md","prompt_content":"## Contexto\nProyecto: L.A.R.S.©\nSesión Feedback-F: Mapa Vivo — Programa Completo + Contenido Semana 1 + Sesión Javier + Extracto Libro — Añadir toda la información del programa de 12 semanas al mapa, contenido de la Semana 1, disponibilidad inmediata de la sesión con Javier, y descarga del extracto del libro.\n\nEsta sesión viene de un feedback del director del programa (Javier). El mapa de neuroregulación necesita mostrar el programa completo y tener más elementos de conversión inmediata.\n\n## Documentos fundamentales (LEER ANTES de empezar)\n- docs/VISION.md — Visión del producto. El programa L.A.R.S.© de 12 semanas.\n- docs/PROFILES.md — Perfiles del cliente ideal. Los 4 perfiles.\n- docs/MOVEMENT.md — Mapa de movimiento. Esto está en el punto Confidence → Readiness.\n- docs/GATEWAY.md — Puerta de entrada.\n- docs/DESIGN.md — Sistema de diseño. NADA se inventa fuera de este doc.\n\n## Lo que ya está construido\n- Mapa vivo con FocusBanner, evoluciones, AspiracionalTimeline\n- Booking system para sesiones con Javier\n- Emails de nurturing (8 emails)\n- Sistema de pagos con Stripe\n\n## Tu tarea\n\n4 cambios en el mapa vivo / experiencia post-resultados.\n\n### Cambio 1: Programa completo semana a semana en el mapa\nEn la sección \"Tu mapa de neuroregulación\" (antes \"Tu mapa de regulación\"), debe haber información del programa ENTERO semana a semana. Actualmente falta.\n\n**Estructura del programa L.A.R.S.© (12 semanas, 3 fases):**\n\n**FASE 1: EL DESPERTAR** (Semanas 1-4)\n_Tu biología se empieza a normalizar._\n\n- **SEMANA 1 — RECONOCER:** El burnout como exilio y mensajero\n- **SEMANA 2 — ESTABILIZAR:** Regulación, sueño y las primeras partes\n- **SEMANA 3 — NUTRIR:** Bioquímica, detox y los patrones que ignoran al cuerpo\n- **SEMANA 4 — ACTIVAR:** Las cuatro funciones comprometidas y la neuroplasticidad\n\n→ Al final de la Fase 1: _Duermes mejor, tienes más claridad, más energía, y tu cuerpo empieza a responder. Tienes un mapa completo de tus patrones de burnout, entiendes qué funciones cerebrales necesitan reparación y métricas objetivas de tu punto de partida._\n_Sueño +15-30%. Energía matutina restaurada. Métricas base completas._\n\n**FASE 2: LA METAMORFOSIS** (Semanas 5-8)\n_Tu cabeza se reorganiza y lo que estaba congelado se procesa._\n\n- **SEMANA 5 — NARRATIVAS:** La Madre Sobreprotectora, las creencias limitantes y la defusión\n- **SEMANA 6 — ASAMBLEA INTERIOR:** Sombra, partes, protectores y exiliados\n- **SEMANA 7 — PROCESAR:** Duelos, irrupciones emocionales y las bestias internas\n- **SEMANA 8 — INTEGRAR:** Ventana de tolerancia, ACT, autocompasión y cierre\n\n→ Al final de la Fase 2: _Has desmontado los patrones mentales que te trajeron al burnout, has procesado las emociones congeladas y tienes una relación radicalmente diferente con tus pensamientos, tus partes internas y tus miedos._\n_MBI baja 20-30%. Niebla mental reducida. Capacidad de decisión restaurada._\n\n**FASE 3: EL LÍDER FÉNIX** (Semanas 9-12)\n_Tus relaciones se reparan y construyes una nueva arquitectura vital._\n\n- **SEMANA 9 — CONECTAR:** Relaciones, corregulación, límites y reparación\n- **SEMANA 10 — VALORES:** Brújula, acción comprometida y laboratorio de valentía\n- **SEMANA 11 — RECONCILIACIÓN:** Liberación, nueva narrativa e identidad\n- **SEMANA 12 — RECONSTRUIR:** La nueva arquitectura y el regreso a casa\n\n→ Al final de la Fase 3: _Tienes una arquitectura vital sostenible, sistemas de alertas tempranas, relaciones reparadas y la capacidad de liderar tu vida sin que el precio sea tu salud. El burnout se convierte en tu maestro, no en tu carcelero._\n_Rendimiento sostenible. Claridad restaurada. Confianza real._\n\n**Implementación:**\n- Diseñar como un acordeón con las 3 fases expandibles (similar al diseño actual de la landing que ya muestra las fases).\n- Cada fase muestra sus 4 semanas con nombre y descripción corta.\n- Los resultados al final de cada fase en texto más destacado (itálica o color acento sutil).\n- Seguir el sistema de diseño: fondo oscuro, tipografía de DESIGN.md.\n- **Estos textos deben ser editables desde el admin** (añadir al sistema de copy-defaults).\n\n### Cambio 2: Contenido detallado de la Semana 1\nAñadir una sección (dentro de la Semana 1 expandida o como sección separada) con lo que incluye la primera semana:\n\n**Presentaciones del Dr. Carlos Alvear L.:**\n1. Psiconeurobiología y epigenética del burnout (15 min.)\n2. Los siete patrones que llevan al burnout (15 min.) + Las métricas y los hitos de la regulación (15 min.)\n3. El potencial de crecimiento como líder y como individuo (15 min.)\n\n**Qué vas a aprender:**\nNeurociencia real de tu colapso · Cartografía corporal del agotamiento · Los 7 patrones de burnout profesional · Métricas base: MBI e indicadores biológicos · Primera práctica de regulación vagal\n\n**Protocolo de Sueño de Emergencia** — Diseñado por el Dr. Carlos Alvear.\nUn plan concreto para ganar hasta una hora más de sueño al día. Resultados en 72 horas.\n\n**Mapa de Niveles de Neurotransmisores (MNN©)**\nTu primer análisis bioquímico real: qué sustancias produce tu cerebro, cuáles le faltan y qué significa eso para tu sueño, tu energía y tu claridad mental. Si no notas mejora en tu sueño, devolución íntegra. Sin preguntas. Sin formularios.\n\n**Sesión 1:1 con Javier A. Martín Ramos**\nDirector del programa. Ya tiene tu mapa — la sesión arranca desde tus datos, no desde cero.\n\n### Cambio 3: Sesión con Javier — Disponible inmediatamente\n**Problema:** La sesión con Javier requiere que el usuario haga una reserva y espere. Cuando alguien está \"caliente\" (acaba de terminar el test y está en estado de Confidence), hacerle esperar para reservar una sesión es perder el momento.\n\n**Solución:**\n- La sesión con Javier debe estar **disponible desde el final del test** (resultados del gateway).\n- NO es un booking que requiera esperar días. Lo que puede haber es un **recordatorio** o una **recomendación** de reservar.\n- En la práctica: después de los resultados del gateway (o en el mapa cuando se desbloquea), mostrar un CTA tipo \"Reserva tu sesión con Javier — ya tiene tu mapa\" que lleve directamente al sistema de booking existente.\n- Si es posible, pre-rellenar el contexto del booking con el perfil y score del usuario.\n\n### Cambio 4: Extracto del libro — Descarga PDF\nAñadir una sección en el mapa (o tras los resultados) con la posibilidad de descargar un extracto del libro:\n- El extracto consiste en la **introducción y el capítulo 1** en PDF.\n- Debe haber una CTA de descarga con texto tipo \"Descarga el primer capítulo\" o similar.\n- **El PDF concreto y el extracto deben poder administrarse desde el admin.** Es decir:\n  - En el admin, una sección donde Javier pueda subir el PDF.\n  - Y editar el texto de la CTA de descarga.\n- Si no se ha subido PDF, esta sección no se muestra.\n\n---\n\nAntes de escribir código:\n1. Muéstrame cómo está estructurado actualmente el mapa vivo y dónde encajaría la sección del programa.\n2. Dime dónde se muestra actualmente el booking de Javier y cómo integrar el CTA en resultados.\n3. Plan para la subida de PDF al admin (storage en Supabase u otra solución).\n4. Espera mi aprobación.\n\n## Reglas críticas\n- NO modifiques la base de datos sin avisarme antes.\n- TODO el diseño viene de docs/DESIGN.md. No inventes valores.\n- El programa semana a semana es contenido sensible — usa EXACTAMENTE los textos que te proporciono arriba.\n- Los textos del programa deben ser editables desde admin.\n- NUNCA ejecutes `npm run build` — usa `npx tsc --noEmit`.\n- Para desplegar: `git push`. Vercel hace el build.\n- Recuerda: no soy desarrollador. Explícame todo en lenguaje simple.\n\n## Validación obligatoria (ANTES de cada commit)\n\n### 1. Tipos y compilación\n- Ejecuta `npx tsc --noEmit` — cero errores, cero warnings.\n\n### 2. Seguridad\n- El PDF se almacena en un lugar seguro (Supabase Storage con políticas).\n- La API de subida de PDF requiere autenticación admin.\n\n### 3. Testing funcional\n- Programa de 12 semanas visible en el mapa con las 3 fases expandibles.\n- Semana 1 muestra todo el contenido detallado.\n- CTA de sesión con Javier aparece en resultados del gateway.\n- Descarga de PDF funciona cuando hay PDF subido.\n- Sin PDF subido, la sección de descarga no aparece.\n- Todos los textos del programa son editables desde admin.\n\n### 4. Diseño y UX\n- Mobile-first 375px.\n- Las 3 fases del programa son visuales y expandibles.\n- Los resultados de cada fase destacan visualmente.\n- CTA de sesión con Javier no es intrusivo pero es visible.\n- Descarga de PDF se siente premium (no un link genérico).\n\n## Actualización de progreso\nDespués de completar:\n1. Actualiza `docs/PROGRESS.md` con resumen de lo construido.\n2. Commit final limpio con mensaje descriptivo.","started_at":null,"completed_at":null,"blocked_reason":null,"notes":"Feedback Javier 30 Mar 2026 — puntos 21, 22, 26, 27. Depende de sesión A para terminología."}]},{"index":12,"name":"Emails por Perfil","description":"Personalizar toda la secuencia de nurturing (8 emails + evoluciones del mapa) según el perfil detectado en el gateway","status":"pending","started_at":null,"completed_at":null,"estimated_sessions":1,"tasks":[{"id":"emails-perfil","title":"Personalizar emails y evoluciones por perfil detectado","description":"Los 8 emails de nurturing (día 0→90) adaptan tono y contenido al perfil (PC=directo/eficiencia, FI=datos/biología, CE=permiso/normalización, CP=estructura/garantías). Las evoluciones del mapa priorizan contenido por perfil. El sistema usa profile_data ya existente en diagnosticos.profile","status":"pending","dependencies":[],"prompt_file":"prompts/session-emails-perfil.md","prompt_content":"","started_at":null,"completed_at":null,"blocked_reason":null,"notes":"Mayor ROI inmediato — toda la señal ya está en la BD"}]},{"index":13,"name":"Inteligencia Colectiva Dinámica","description":"Los datos colectivos del gateway y mapa dejan de ser estáticos y se calculan en tiempo real desde Supabase","status":"pending","started_at":null,"completed_at":null,"estimated_sessions":1,"tasks":[{"id":"colectiva-dinamica","title":"Datos colectivos en tiempo real desde Supabase","description":"Los 'datos colectivos' del gateway (73% de ejecutivos..., 83% con tu combinación...) y del mapa se calculan en tiempo real cuando hay >100 diagnósticos. API que agrega: distribución de perfiles, dimensión más comprometida por perfil, % por combinación de respuestas. Fallback a datos estáticos cuando <100. El Controlador se vuelve loco con datos reales.","status":"pending","dependencies":[],"prompt_file":"prompts/session-colectiva-dinamica.md","prompt_content":"","started_at":null,"completed_at":null,"blocked_reason":null,"notes":""}]},{"index":14,"name":"CONVERT Path (90 segundos)","description":"Camino rápido del gateway para personas en Confidence/Readiness: P1 + P2 + P7 → bisagra → email → resultado","status":"pending","started_at":null,"completed_at":null,"estimated_sessions":1,"tasks":[{"id":"convert-path","title":"Gateway CONVERT: recorrido rápido 90 segundos","description":"Detectar UTM de Confidence/Readiness. Ofrecer 'Rápido (1min) o Completo (3min)'. Path CONVERT: P1 + P2 + P7 (sliders) → bisagra comprimida (solo comparación) → email → resultado. Mismo scoring pero menos señal. Para tráfico de conferencias de Javier, contenido avanzado, sesiones de valoración.","status":"pending","dependencies":[],"prompt_file":"prompts/session-convert-path.md","prompt_content":"","started_at":null,"completed_at":null,"blocked_reason":null,"notes":"Diseñado en FEATURE_GATEWAY_DESIGN.md sección 'Adaptación por estado de entrada'"}]},{"index":15,"name":"Experiencia Post-Pago Semana 1","description":"Onboarding inmediato tras pagar: protocolo de sueño, agendar sesión, vídeo de bienvenida. El quick win de 72h empieza en el segundo posterior al pago.","status":"pending","started_at":null,"completed_at":null,"estimated_sessions":1,"tasks":[{"id":"post-pago","title":"Experiencia web post-pago: onboarding Semana 1","description":"Rediseñar /pago/exito como experiencia de onboarding: (1) Descarga protocolo de sueño de emergencia, (2) Agendar sesión 1:1 con Javier (booking ya existe), (3) Vídeo corto de bienvenida, (4) Qué esperar en las próximas 72h. Personalizado por perfil. El río no se rompe — la persona que acaba de pagar aterriza en acción inmediata.","status":"pending","dependencies":[],"prompt_file":"prompts/session-post-pago.md","prompt_content":"","started_at":null,"completed_at":null,"blocked_reason":null,"notes":"Requiere contenido de Javier: protocolo sueño PDF + vídeo bienvenida"}]},{"index":16,"name":"Re-engagement Inteligente","description":"Automatizaciones que actúan sobre patrones de comportamiento: visitas sin pago, emails sin abrir, mapas abandonados","status":"pending","started_at":null,"completed_at":null,"estimated_sessions":1,"tasks":[{"id":"reengagement","title":"Sistema de re-engagement basado en comportamiento","description":"Cron que detecta patrones: (1) 3+ visitas al mapa sin pago → email especial por perfil, (2) 3+ emails sin abrir → reducir frecuencia + cambiar frame, (3) Mapa no visitado en 14+ días → email de reactivación, (4) Lead caliente (heat>5) sin booking → notificar a Javier con contexto. Usa heat score + perfil + historial de visitas/emails ya existentes.","status":"pending","dependencies":[],"prompt_file":"prompts/session-reengagement.md","prompt_content":"","started_at":null,"completed_at":null,"blocked_reason":null,"notes":"Base para el co-learning system futuro"}]},{"index":17,"name":"Co-Learning System — Backend","description":"Cola de aprobación de acciones, registro de decisiones de Javier, cálculo de confianza progresiva","status":"pending","started_at":null,"completed_at":null,"estimated_sessions":1,"tasks":[{"id":"colearning-1","title":"Co-learning backend: cola de acciones + registro de decisiones","description":"Tabla suggested_actions (acción, razonamiento, perfil, confianza, status: pending/approved/modified/rejected). API para CRUD. Cron genera acciones sugeridas basadas en patrones detectados. Javier aprueba/modifica/rechaza. Sistema registra cada decisión para calcular confianza futura.","status":"pending","dependencies":["reengagement"],"prompt_file":"prompts/session-colearning-1-backend.md","prompt_content":"","started_at":null,"completed_at":null,"blocked_reason":null,"notes":"Patrón universal OWNERS: cola aprobación → confianza → autonomía"}]},{"index":18,"name":"Co-Learning System — Frontend + Educación","description":"Panel de acciones pendientes en admin, educación bidireccional, % de confianza visible","status":"pending","started_at":null,"completed_at":null,"estimated_sessions":1,"tasks":[{"id":"colearning-2","title":"Co-learning frontend: panel de acciones + educación bidireccional","description":"Nueva sección en admin: acciones pendientes de aprobación con razonamiento. Javier puede aprobar/modificar/rechazar. Si modifica contra la inteligencia de perfil, el sistema sugiere alternativa con datos. % de confianza visible por tipo de acción. Resumen diario de acciones auto-ejecutadas (confianza >90%) + pendientes.","status":"pending","dependencies":["colearning-1"],"prompt_file":"prompts/session-colearning-2-frontend.md","prompt_content":"","started_at":null,"completed_at":null,"blocked_reason":null,"notes":"Patrón universal OWNERS"}]},{"index":19,"name":"WhatsApp — Meta Cloud API","description":"Integrar Meta Cloud API para notificaciones de evolución del mapa vía WhatsApp","status":"pending","started_at":null,"completed_at":null,"estimated_sessions":1,"tasks":[{"id":"whatsapp","title":"Integración WhatsApp: opt-in + plantillas + envío","description":"Meta Cloud API (free tier: 1.000 conv/mes). Opt-in después del arquetipo (día 3) en el mapa. Plantillas de mensajes para aprobación de Meta: evolución del mapa, recordatorio de visita, resultado disponible. Tracking de delivery/read. Fallback a email si no opt-in. Panel admin: ver qué leads tienen WhatsApp activo.","status":"pending","dependencies":[],"prompt_file":"prompts/session-whatsapp.md","prompt_content":"","started_at":null,"completed_at":null,"blocked_reason":null,"notes":"Requiere: Meta Business Suite + número dedicado + verificación negocio"}]},{"index":20,"name":"Comunidad Latente en Mapa","description":"Datos agregados anónimos de evolución colectiva visibles en el mapa individual","status":"pending","started_at":null,"completed_at":null,"estimated_sessions":1,"tasks":[{"id":"comunidad-latente","title":"Evolución colectiva anónima en el mapa vivo","description":"En la evolución día 14-21, mostrar: 'Los [perfil] que empezaron la misma semana que tú han mejorado una media de X puntos en [dimensión].' Datos agregados reales de reevaluaciones. Refuerza que actuar funciona sin testimonios. Solo visible cuando hay >20 personas con reevaluación en la misma cohorte temporal.","status":"pending","dependencies":["colectiva-dinamica"],"prompt_file":"prompts/session-comunidad-latente.md","prompt_content":"","started_at":null,"completed_at":null,"blocked_reason":null,"notes":"Necesita volumen de reevaluaciones reales para ser útil"}]},{"index":21,"name":"Gateway Aprende — A/B Testing","description":"Variantes de micro-espejos y medición de qué textos producen mayor completion rate y conversión","status":"pending","started_at":null,"completed_at":null,"estimated_sessions":1,"tasks":[{"id":"gateway-aprende","title":"A/B testing de micro-espejos y textos del gateway","description":"Sistema simple de variantes: cada micro-espejo tiene 2-3 versiones de texto. Asignación aleatoria por sesión (guardada en localStorage + BD). Medición: completion rate por variante, conversión a email, conversión a pago. Dashboard en admin con resultados por variante. Sin librería de A/B testing — implementación ligera propia.","status":"pending","dependencies":[],"prompt_file":"prompts/session-gateway-aprende.md","prompt_content":"","started_at":null,"completed_at":null,"blocked_reason":null,"notes":"El gateway se vuelve más efectivo con cada persona que pasa"}]},{"index":22,"name":"Ignición — Arquitectura de Distribución","description":"Diseño del sistema de distribución de tráfico: contenido de Javier, SEO, redes, el gateway como pieza central","status":"pending","started_at":null,"completed_at":null,"estimated_sessions":1,"tasks":[{"id":"ignicion","title":"Arquitectura de ignición y distribución de tráfico","description":"Diseñar y construir: (1) Landing pages por perfil (SEO: burnout ejecutivo, agotamiento directivo, etc.), (2) UTM tracking avanzado para medir origen de cada lead, (3) Open Graph optimizado para compartir (imagen dinámica con score), (4) Página de resultados SEO-friendly con datos agregados anónimos. Activar skills /ignition + /drift para diseño de estrategia de canales.","status":"pending","dependencies":["colectiva-dinamica"],"prompt_file":"prompts/session-ignicion.md","prompt_content":"","started_at":null,"completed_at":null,"blocked_reason":null,"notes":"Requiere decisiones estratégicas de Alex sobre canales prioritarios"}]}],"metadata":{"notes":"23 sesiones. S0-5: completados. S6-11: Feedback Javier 30 Mar. S12-22: fase de inteligencia. El gateway, mapa vivo, admin v2, emails, booking ya están en producción."}}]};
+
+function init() {
+  const { registry, projects } = DATA;
+
+  // Last updated
+  document.getElementById('lastUpdated').textContent =
+    'Actualizado: ' + new Date(registry.last_updated).toLocaleString('es-ES');
+  document.getElementById('totalProjects').textContent =
+    registry.projects.length + ' proyecto' + (registry.projects.length !== 1 ? 's' : '');
+
+  // Stats
+  let totalTasks = 0, completedTasks = 0, inProgressTasks = 0, blockedTasks = 0;
+  const alerts = [];
+
+  projects.forEach(p => {
+    p.sprints.forEach(s => {
+      s.tasks.forEach(t => {
+        totalTasks++;
+        if (t.status === 'completed') completedTasks++;
+        if (t.status === 'in_progress') {
+          inProgressTasks++;
+          if (t.started_at) {
+            const days = (Date.now() - new Date(t.started_at).getTime()) / 86400000;
+            if (days > 3) {
+              alerts.push({
+                type: 'warning',
+                text: `"${t.title}" en ${p.name} lleva ${Math.floor(days)} dias en progreso`
+              });
+            }
+          }
+        }
+        if (t.status === 'blocked') {
+          blockedTasks++;
+          alerts.push({
+            type: 'error',
+            text: `"${t.title}" en ${p.name} esta bloqueada` + (t.blocked_reason ? ': ' + t.blocked_reason : '')
+          });
+        }
+      });
+    });
+  });
+
+  const statsHtml = `
+    <div class="stat-card">
+      <div class="label">Tareas totales</div>
+      <div class="value">${totalTasks}</div>
+      <div class="sub">${completedTasks} completadas</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">En progreso</div>
+      <div class="value" style="color:var(--accent)">${inProgressTasks}</div>
+      <div class="sub">ahora mismo</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Bloqueadas</div>
+      <div class="value" style="color:${blockedTasks > 0 ? 'var(--red)' : 'var(--text-3)'}">${blockedTasks}</div>
+      <div class="sub">${blockedTasks > 0 ? 'requieren atencion' : 'todo limpio'}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Progreso global</div>
+      <div class="value">${totalTasks > 0 ? Math.round((completedTasks/totalTasks)*100) : 0}%</div>
+      <div class="sub">${completedTasks} de ${totalTasks}</div>
+    </div>
+  `;
+  document.getElementById('statsBar').innerHTML = statsHtml;
+
+  // Alerts
+  if (alerts.length > 0) {
+    document.getElementById('alertsContainer').innerHTML = alerts.map(a => `
+      <div class="alert ${a.type === 'warning' ? 'warning' : ''}">
+        <span class="alert-icon">${a.type === 'warning' ? '&#9888;' : '&#9888;'}</span>
+        ${a.text}
+      </div>
+    `).join('');
+  }
+
+  // Next action
+  let nextTask = null, nextProject = null;
+  for (const p of projects) {
+    if (p.status !== 'active') continue;
+    for (const s of p.sprints) {
+      if (s.status === 'completed') continue;
+      for (const t of s.tasks) {
+        if (t.status === 'pending' || t.status === 'in_progress') {
+          const depsOk = !t.dependencies || t.dependencies.length === 0 ||
+            t.dependencies.every(depId => {
+              for (const sp of p.sprints) {
+                const dep = sp.tasks.find(x => x.id === depId);
+                if (dep && dep.status === 'completed') return true;
+              }
+              return false;
+            });
+          if (depsOk) {
+            nextTask = t;
+            nextProject = p;
+            break;
+          }
+        }
+      }
+      if (nextTask) break;
+    }
+    if (nextTask) break;
+  }
+
+  if (nextTask) {
+    document.getElementById('nextAction').innerHTML = `
+      <div class="next-action">
+        <div class="next-action-text">
+          <h3>&#9654; Siguiente accion</h3>
+          <p><strong>${nextProject.name}</strong> &mdash; ${nextTask.title}</p>
+        </div>
+        ${nextTask.prompt_file ? `<button class="next-action-btn" onclick="showPrompt('${nextProject.slug}','${nextTask.id}')">Ver prompt</button>` : ''}
+      </div>
+    `;
+  }
+
+  // Projects
+  const projectsHtml = projects.map(p => {
+    const completed = p.sprints.reduce((acc, s) => acc + s.tasks.filter(t => t.status === 'completed').length, 0);
+    const total = p.sprints.reduce((acc, s) => acc + s.tasks.length, 0);
+    const pct = total > 0 ? Math.round((completed/total)*100) : 0;
+    const badgeClass = p.status === 'active' ? 'badge-active' : p.status === 'paused' ? 'badge-paused' : 'badge-completed';
+    const statusLabel = p.status === 'active' ? 'Activo' : p.status === 'paused' ? 'Pausado' : 'Completado';
+    const currentSprint = p.sprints.find(s => s.status === 'in_progress') || p.sprints.find(s => s.status === 'pending');
+
+    return `
+      <div class="project-card" id="card-${p.slug}">
+        <div class="project-header" onclick="toggleProject('${p.slug}')">
+          <div>
+            <div class="project-name">${p.name}</div>
+            <div class="project-desc">${p.description}${currentSprint ? ' — Sprint ' + currentSprint.index + ': ' + currentSprint.name : ''}</div>
+          </div>
+          <span class="project-badge ${badgeClass}">${statusLabel}</span>
+        </div>
+        <div class="project-progress">
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+          <div class="progress-info">
+            <span>Sprint ${p.current_sprint || 0} de ${p.sprints.length}</span>
+            <span>${pct}% completado (${completed}/${total} tareas)</span>
+          </div>
+        </div>
+        <div class="project-details">
+          <div class="sprint-list">
+            ${p.sprints.map(s => `
+              <div class="sprint-item">
+                <div class="sprint-header">
+                  <span class="sprint-name">Sprint ${s.index}: ${s.name}</span>
+                  <span class="sprint-status status-${s.status}">${s.status === 'completed' ? 'Completado' : s.status === 'in_progress' ? 'En progreso' : 'Pendiente'}</span>
+                </div>
+                <div class="task-list">
+                  ${s.tasks.map(t => `
+                    <div class="task-item">
+                      <div class="task-check ${t.status}">${t.status === 'completed' ? '&#10003;' : t.status === 'in_progress' ? '&#9679;' : t.status === 'blocked' ? '!' : ''}</div>
+                      <span class="task-title ${t.status === 'completed' ? 'completed' : ''}">${t.title}</span>
+                      ${t.prompt_file && t.status !== 'completed' ? `<button class="prompt-btn" onclick="event.stopPropagation();showPrompt('${p.slug}','${t.id}')">Prompt</button>` : ''}
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('projectsContainer').innerHTML = projectsHtml;
+}
+
+function toggleProject(slug) {
+  document.getElementById('card-' + slug).classList.toggle('expanded');
+}
+
+function showPrompt(projectSlug, taskId) {
+  const project = DATA.projects.find(p => p.slug === projectSlug);
+  if (!project) return;
+  let prompt = '';
+  for (const s of project.sprints) {
+    const task = s.tasks.find(t => t.id === taskId);
+    if (task && task.prompt_content) {
+      prompt = task.prompt_content;
+      document.getElementById('modalContent').innerHTML = `
+        <h3>${task.title}</h3>
+        <pre id="promptText">${escapeHtml(prompt)}</pre>
+        <button class="copy-btn" onclick="copyPrompt()">Copiar prompt</button>
+      `;
+      document.getElementById('modalOverlay').classList.add('active');
+      return;
+    }
+  }
+}
+
+function copyPrompt() {
+  const text = document.getElementById('promptText').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copiado!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copiar prompt'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+init();
+</script>
+</body>
+</html>

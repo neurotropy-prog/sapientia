@@ -1,0 +1,960 @@
+/* ============================================================
+   SISTEMA DE DISEÑO — Método LIBERA® — Tokens CSS
+   Fuente de verdad: docs/DESIGN.md
+   Estética: limpia-científica, fondo blanco puro, Host Grotesk mono-familia
+   ============================================================ */
+
+:root {
+  /* ---- HEADER ---- */
+  --header-height: 58px;
+
+  /* ---- COLORES BASE ---- */
+  --color-bg-primary: #FFFFFF;
+  --color-bg-secondary: #EAF2EE;
+  --color-bg-tertiary: #FFFFFF;
+  --color-bg-elevated: #F0F3F8;
+  --color-bg-warm: #FBF8F3;
+  --color-bg-warm-alt: #F7F5F0;
+  --color-bg-green-soft: #EBF5EA;
+  --color-surface-subtle: rgba(38, 66, 51, 0.10);
+  --color-bg-dark: #264233;
+  --color-bg-dark-deep: #1B4332;
+
+  /* ---- COLORES DE TEXTO ---- */
+  --color-text-primary: #212426;
+  --color-text-secondary: #2D2D2D;
+  --color-text-tertiary: #878E92;
+  --color-text-muted: #555555;
+  --color-text-inverse: #FFFFFF;
+  --color-text-inverse-muted: rgba(255, 255, 255, 0.65);
+  --color-text-inverse-faded: rgba(255, 255, 255, 0.5);
+
+  /* ---- COLOR DE ACENTO (Salmón / Terracota Cálido) ---- */
+  --color-accent: #CD796C;
+  --color-accent-hover: #DA7468;
+  --color-accent-subtle: rgba(205, 121, 108, 0.15);
+  --color-accent-muted: #CC796C;
+  /* Aliases semánticos para el nuevo DESIGN.md */
+  --color-accent-warm: #CD796C;
+  --color-accent-warm-hover: #DA7468;
+  --color-accent-warm-subtle: rgba(205, 121, 108, 0.15);
+  --color-accent-warm-muted: #CC796C;
+
+  /* ---- COLOR PRIMARIO (Verde Bosque) — CTA Principal ---- */
+  --color-cta: #264233;
+  --color-cta-hover: #1E352A;
+  --color-cta-text: #FFFFFF;
+  --color-primary: #264233;
+  --color-primary-deep: #1B4332;
+  --color-primary-hover: #1E352A;
+  --color-primary-light: #3A5A47;
+  --color-primary-subtle: rgba(38, 66, 51, 0.10);
+
+  /* ---- COLOR SECUNDARIO (Salmón para botón secundario) ---- */
+  --color-secondary: #CD796C;
+  --color-secondary-light: #DA7468;
+
+  /* ---- COLOR DE ENERGÍA (Dorado / Amarillo) ---- */
+  --color-energy: #F2D162;
+  --color-energy-hover: #EDD274;
+  --color-energy-text: #212426;
+
+  /* ---- COLOR DE URGENCIA (Terracota / Arcilla) ---- */
+  --color-urgency: #C0392B;
+  --color-urgency-muted: rgba(192, 57, 43, 0.85);
+
+  /* ---- SUPERFICIES DECORATIVAS ---- */
+  --color-surface-lavender: #F3E8F6;
+  --color-surface-cream: #FBF8F3;
+  --color-surface-lime: #EBF5EA;
+  --color-surface-peach: #EAF2EE;
+
+  /* ---- COLORES FUNCIONALES ---- */
+  --color-success: #489F2E;
+  --color-warning: #edd274;
+  --color-error: #8B0000;
+  --color-info: #4A8DB7;
+
+  /* ---- TIPOGRAFÍA — Escala (base 16px, ratio 1.250 Major Third) ---- */
+  --text-display: 3.5rem;       /* 56px */
+  --text-h1: 2.5rem;            /* 40px */
+  --text-h2: 2rem;              /* 32px */
+  --text-h3: 1.5rem;            /* 24px */
+  --text-h4: 1.25rem;           /* 20px */
+  --text-body: 1rem;            /* 16px */
+  --text-body-sm: 0.9375rem;    /* 15px */
+  --text-caption: 0.75rem;      /* 12px */
+  --text-overline: 0.75rem;     /* 12px */
+
+  /* ---- LINE HEIGHTS ---- */
+  --lh-display: 1.05;
+  --lh-h1: 1.15;
+  --lh-h2: 1.2;
+  --lh-h3: 1.3;
+  --lh-h4: 1.35;
+  --lh-body: 1.6;
+  --lh-body-sm: 1.5;
+  --lh-caption: 1.4;
+
+  /* ---- LETTER SPACING ---- */
+  --ls-display: -0.02em;
+  --ls-h1: -0.015em;
+  --ls-h2: -0.01em;
+  --ls-h3: -0.005em;
+  --ls-h4: 0;
+  --ls-body: 0;
+  --ls-body-sm: 0.005em;
+  --ls-caption: 0.02em;
+  --ls-overline: 0.15em;
+
+  /* ---- ESPACIADO (base 4px) ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* ---- LAYOUT ---- */
+  --container-max: 1280px;
+  --container-padding-mobile: 24px;
+  --container-padding-tablet: 40px;
+  --container-padding-desktop: 64px;
+  --text-max-width: 42rem;
+
+  /* ---- COMPONENTES ---- */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-pill: 9999px;
+
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 300ms ease;
+  --transition-layout: 400ms ease;
+  --transition-expressive: 600ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ---- BORDES ---- */
+  --border-subtle: 1px solid rgba(38, 66, 51, 0.18);
+  --border-medium: 1px solid rgba(38, 66, 51, 0.10);
+  --border-interactive: 1px solid rgba(38, 66, 51, 0.12);
+  --border-accent: 1px solid rgba(205, 121, 108, 0.12);
+  --border-accent-strong: 1px solid rgba(205, 121, 108, 0.15);
+}
+
+/* ---- RESPONSIVE TYPOGRAPHY ---- */
+@media (max-width: 640px) {
+  :root {
+    --text-display: 2.5rem;   /* 40px en móvil */
+    --text-h1: 2rem;          /* 32px en móvil */
+  }
+}
+
+/* ---- RESET & BASE ---- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-padding-top: calc(var(--header-height) + 5px);
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-host-grotesk), system-ui, sans-serif;
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  min-height: 100dvh;
+}
+
+/* ---- ACCESIBILIDAD ---- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Focus visible para teclado */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ---- SELECCIÓN ---- */
+::selection {
+  background-color: var(--color-accent-subtle);
+  color: var(--color-text-primary);
+}
+
+/* ---- LINKS BASE ---- */
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+a:hover {
+  color: var(--color-accent-hover);
+}
+
+/* ---- IMÁGENES ---- */
+img,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* ---- CONTENEDOR PRINCIPAL ---- */
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding-left: var(--container-padding-mobile);
+  padding-right: var(--container-padding-mobile);
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding-left: var(--container-padding-tablet);
+    padding-right: var(--container-padding-tablet);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding-left: var(--container-padding-desktop);
+    padding-right: var(--container-padding-desktop);
+  }
+}
+
+/* ---- UTILIDAD: max-width para texto ---- */
+.text-container {
+  max-width: var(--text-max-width);
+}
+
+/* ---- Hero responsive — max-width por breakpoint ---- */
+.hero-content {
+  width: 100%;
+  max-width: 540px;
+}
+
+@media (min-width: 1024px) {
+  .hero-content {
+    max-width: 720px;
+  }
+}
+
+/* ---- Grid responsive — Sección TENSIÓN ---- */
+.tension-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .tension-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ---- Skip link (accesibilidad) ---- */
+.skip-link {
+  position: absolute;
+  top: -48px;
+  left: 0;
+  z-index: 100;
+  background: var(--color-accent);
+  color: var(--color-text-inverse);
+  font-family: var(--font-host-grotesk, system-ui, sans-serif);
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  padding: var(--space-2) var(--space-4);
+  border-radius: 0 0 var(--radius-sm) 0;
+  text-decoration: none;
+  transition: top var(--transition-fast);
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: none;
+}
+
+/* ============================================================
+   EASING FUNCTIONS — Fuente: docs/ANIMATIONS.md
+   ============================================================ */
+:root {
+  --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out:    cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Zone transition easings — EXPERIENCE_STANDARDS.md §1 */
+  --ease-zone: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* REVEAL zone — solid color (no gradients) */
+  --bg-reveal-solid: #EAF2EE;
+}
+
+/* ============================================================
+   SCROLL REVEAL — A-03 / A-15 (IntersectionObserver)
+   ============================================================ */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity  600ms var(--ease-out-expo),
+    transform 600ms var(--ease-out-expo);
+}
+
+.scroll-reveal.scroll-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger delays para grupos de cards */
+.scroll-stagger > .scroll-reveal:nth-child(1) { transition-delay:   0ms; }
+.scroll-stagger > .scroll-reveal:nth-child(2) { transition-delay: 150ms; }
+.scroll-stagger > .scroll-reveal:nth-child(3) { transition-delay: 300ms; }
+
+/* Testimonios — delays para stagger */
+.testimonials-stagger > .scroll-reveal:nth-child(1) { transition-delay:   0ms; }
+.testimonials-stagger > .scroll-reveal:nth-child(2) { transition-delay: 200ms; }
+.testimonials-stagger > .scroll-reveal:nth-child(3) { transition-delay: 400ms; }
+
+/* ============================================================
+   TYPING CURSOR — A-05 / A-09
+   ============================================================ */
+.typing-cursor::after {
+  content: '|';
+  animation: blink 530ms step-end infinite;
+  color: var(--color-accent);
+  margin-left: 1px;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* ============================================================
+   ANIMACIONES — Fase 1
+   ============================================================ */
+
+/* Secciones below-the-fold — entrada con desplazamiento */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* P1 — pulse sutil al recibir foco desde CTA */
+@keyframes p1Pulse {
+  0%   { background-color: transparent; }
+  35%  { background-color: rgba(205, 121, 108, 0.04); }
+  100% { background-color: transparent; }
+}
+
+.p1-pulse {
+  animation: p1Pulse 500ms ease-out;
+  border-radius: var(--radius-lg);
+}
+
+/* ============================================================
+   ANIMACIONES — Gateway Bloque 1
+   ============================================================ */
+
+/* Entrada del overlay del gateway */
+@keyframes gateway-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.gateway-overlay {
+  animation: gateway-enter 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Entrada de cada paso — slide horizontal desde la derecha (A-04) */
+@keyframes questionEnter {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.step-enter {
+  animation: questionEnter 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 100ms; /* the breath — 100ms gap between exit and enter */
+  opacity: 0;
+}
+
+/* Entrada del micro-espejo (ZONA 2 — reflexión): slide desde izquierda */
+@keyframes mirror-enter {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.mirror-enter {
+  animation: mirror-enter 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Respiración de zona — scale sutil al cambiar de zona */
+@keyframes zone-breathe {
+  0%   { transform: scale(1.0); }
+  40%  { transform: scale(1.008); }
+  100% { transform: scale(1.0); }
+}
+
+.zone-breathe {
+  animation: zone-breathe 600ms ease forwards;
+}
+
+/* Dots del "Analizando..." */
+@keyframes dot-pulse {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+  40%            { opacity: 1;   transform: scale(1.0); }
+}
+
+.analyzing-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+}
+
+.analyzing-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-accent-muted);
+  animation: dot-pulse 1.4s ease-in-out infinite;
+}
+
+.analyzing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.analyzing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+/* Botón Continuar de P3 — pulse cuando ≥4 ítems */
+@keyframes button-attractor {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(205, 121, 108, 0); }
+  50%       { box-shadow: 0 0 0 6px rgba(205, 121, 108, 0.12); }
+}
+
+.button-attract {
+  animation: button-attractor 2s ease-in-out infinite;
+}
+
+/* Fade-in para elementos que aparecen (datos colectivos, botones) */
+@keyframes fade-in-quick {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.fade-in {
+  animation: fade-in-quick 300ms ease forwards;
+}
+
+/* ============================================================
+   STEP-EXIT — A-04 horizontal slide left
+   ============================================================ */
+@keyframes questionExit {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-30px); }
+}
+
+.step-exit {
+  animation: questionExit 300ms ease-in forwards;
+  pointer-events: none;
+}
+
+/* ============================================================
+   CARD SELECTION PULSE — A-02
+   ============================================================ */
+@keyframes selectPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+/* ============================================================
+   FADE-IN-UP — counter y revelaciones secuenciales
+   ============================================================ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in-up {
+  animation: fadeInUp 400ms var(--ease-out-expo) both;
+}
+
+/* ============================================================
+   PULSE GLOW — CalculandoScreen A-09
+   ============================================================ */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+/* ============================================================
+   BISAGRA BOX — Radial glow + scale-in (A-10)
+   ============================================================ */
+.bisagra-box {
+  position: relative;
+}
+
+.bisagra-box::before {
+  content: '';
+  position: absolute;
+  inset: -40px;
+  border-radius: 24px;
+  background: rgba(205,121,108,0.06);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 600ms var(--ease-out-expo);
+  pointer-events: none;
+}
+
+.bisagra-box.bisagra-glow-active::before {
+  opacity: 1;
+  animation: bisagra-pulse 2s ease-in-out infinite;
+}
+
+@keyframes bisagra-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.04); }
+}
+
+@keyframes bisagra-scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ── Segmented Preloader animation ── */
+
+@keyframes bisagra-seg-in {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ============================================================
+   SLIDER RANGE — thumb styling cross-browser
+   Hidden by default, revealed on first interaction via .slider-touched
+   ============================================================ */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* --- Thumb: always visible --- */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  cursor: pointer;
+  border: none;
+  margin-top: -10px; /* center on 6px track */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  opacity: 1;
+  transform: scale(1);
+  transition: transform 150ms ease;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  opacity: 1;
+  transform: scale(1);
+  transition: transform 150ms ease;
+}
+
+/* --- Thumb: ACTIVE (pressed) state --- */
+.slider-touched input[type="range"]:active::-webkit-slider-thumb {
+  transform: scale(1.2);
+}
+
+.slider-touched input[type="range"]:active::-moz-range-thumb {
+  transform: scale(1.2);
+}
+
+/* --- Thumb: PULSE on boundary crossing --- */
+.slider-pulse input[type="range"]::-webkit-slider-thumb {
+  animation: slider-boundary-pulse 300ms ease;
+}
+
+.slider-pulse input[type="range"]::-moz-range-thumb {
+  animation: slider-boundary-pulse 300ms ease;
+}
+
+/* --- Track: 6px height --- */
+input[type="range"]::-webkit-slider-runnable-track {
+  background: transparent;
+  height: 6px;
+}
+
+input[type="range"]::-moz-range-track {
+  background: transparent;
+  height: 6px;
+  border-radius: 3px;
+}
+
+/* --- Animations --- */
+@keyframes slider-thumb-in {
+  from { opacity: 0; transform: scale(0); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slider-boundary-pulse {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+/* ============================================================
+   MICRO-MIRROR STAGGER — Sprint 2 Emotional Zones
+   Each element in the micro-mirror appears sequentially:
+   label → observation → collective data → continue button
+   ============================================================ */
+
+/* Slide-in from left for observation text */
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Stagger classes for micro-mirror elements */
+.mirror-stagger-label {
+  opacity: 0;
+  animation: fade-in-quick 300ms var(--ease-out-expo) forwards;
+}
+
+.mirror-stagger-observation {
+  opacity: 0;
+  animation: slideInLeft 400ms var(--ease-out-expo) 150ms forwards;
+}
+
+.mirror-stagger-data {
+  opacity: 0;
+  animation: fade-in-quick 300ms var(--ease-out-expo) 550ms forwards;
+}
+
+.mirror-stagger-button {
+  opacity: 0;
+  animation: fade-in-quick 300ms var(--ease-out-expo) 750ms forwards;
+}
+
+/* Intensified micro-mirror 2: button delay */
+.mirror-stagger-button-intensified {
+  opacity: 0;
+  animation: fade-in-quick 300ms var(--ease-out-expo) 800ms forwards;
+}
+
+/* ============================================================
+   HERO ENTRANCE — Staggered reveal sequence (Sprint 3)
+   ============================================================ */
+
+/* Hero fade-in-up: 600ms for SHOCK, 500ms for headline */
+.hero-reveal {
+  opacity: 0;
+}
+
+.hero-reveal.hero-animate-fade-in-up {
+  animation: heroFadeInUp 600ms var(--ease-out-expo) forwards;
+}
+
+.hero-reveal.hero-animate-fade-in-up-fast {
+  animation: heroFadeInUp 500ms var(--ease-out-expo) forwards;
+}
+
+.hero-reveal.hero-animate-fade-in {
+  animation: heroFadeIn 400ms var(--ease-out-expo) forwards;
+}
+
+@keyframes heroFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* P1 cards stagger entrance */
+.p1-card-reveal {
+  opacity: 0;
+}
+
+.p1-card-reveal.p1-card-animate {
+  animation: heroFadeInUp 400ms var(--ease-out-expo) forwards;
+}
+
+/* prefers-reduced-motion ya definido arriba en sección ACCESIBILIDAD */
+
+/* ============================================================
+   SITE HEADER
+   ============================================================ */
+
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: var(--header-height, 56px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  background: #ffffff;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: var(--border-subtle);
+  transition: background 300ms ease, border-color 300ms ease;
+}
+
+/* Pages with fixed header need padding-top on their main content.
+   Applied via .page-content class or inline calc(--header-height + spacing). */
+
+/* Gateway overlays start below the fixed header, no overscroll bounce */
+.gateway-overlay {
+  top: var(--header-height, 56px) !important;
+  overscroll-behavior: none;         /* no rubber-band bounce */
+  -webkit-overflow-scrolling: touch; /* smooth momentum on iOS */
+}
+
+/* Landing variant: transparent by default, overlaps hero */
+.site-header[data-variant="landing"] {
+  background: transparent;
+  border-bottom-color: transparent;
+}
+
+.site-header[data-variant="landing"] + * {
+  padding-top: 0;
+}
+
+.site-header[data-variant="landing"] .site-header__logo {
+  opacity: 1;
+}
+
+/* Landing opaque state (scroll or gateway active) */
+.site-header[data-variant="landing"].site-header--opaque {
+  background: var(--color-bg-primary);
+  border-bottom-color: rgba(38, 66, 51, 0.08);
+}
+
+.site-header__container {
+  width: 100%;
+  max-width: 1280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.site-header__logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.site-header__logo {
+  height: 34px;  /* was 24px — +40% per Javi feedback A4 */
+  width: auto;
+}
+
+/* ── Responsive ─── */
+
+@media (min-width: 640px) {
+  :root { --header-height: 64px; }
+  .site-header {
+    padding: 0 40px;
+  }
+  .site-header__logo {
+    height: 39px;  /* was 28px — +40% */
+  }
+}
+
+@media (min-width: 1024px) {
+  :root { --header-height: 72px; }
+  .site-header {
+    padding: 0 64px;
+  }
+  .site-header__logo {
+    height: 45px;  /* was 32px — +40% */
+  }
+}
+
+/* ── Session CTA buttons: stack on mobile ─── */
+.session-cta-buttons {
+  flex-direction: column;
+}
+@media (min-width: 640px) {
+  .session-cta-buttons {
+    flex-direction: row;
+  }
+}
+
+/* ── Print ─── */
+
+@media print {
+  .site-header {
+    display: none;
+  }
+}
+
+/* ── Reduced motion ─── */
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .site-header[data-variant="landing"] .site-header__logo {
+    transition: none;
+  }
+}
+
+/* ============================================================
+   BELOW-THE-FOLD — Four Seasons Upgrade
+   ============================================================ */
+
+/* Overline accent — reusable terracota overline */
+.overline-accent {
+  font-family: var(--font-host-grotesk);
+  font-size: 1.125rem;           /* 18px — solo landing overlines */
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-accent);
+  line-height: var(--lh-caption);
+  margin-bottom: var(--space-4);
+}
+
+/* Section gradient transitions */
+.section-gradient {
+  height: 64px;
+  pointer-events: none;
+}
+
+/* Testimonials grid */
+.testimonials-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-5);
+  }
+}
+
+/* Footer grid */
+.footer-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+@media (min-width: 768px) {
+  .footer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-8);
+  }
+}
+
+
+/* Credentials card grid */
+.credentials-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .credentials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-6);
+    text-align: left;
+  }
+}
+
+/* ─── Admin skeleton pulse ─── */
+@keyframes hubPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* ─── Admin action button click feedback ─── */
+.admin-action-btn:active {
+  transform: scale(0.98);
+}
+

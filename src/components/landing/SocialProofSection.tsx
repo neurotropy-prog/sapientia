@@ -1,0 +1,148 @@
+'use client'
+
+/**
+ * SocialProofSection — Sección PRUEBA SOCIAL.
+ * Cards pastel diferenciadas (lavanda, crema, lima) con comillas decorativas y badges.
+ * Headline con overline. Stagger 200ms.
+ * IMPORTANTE: Textos son PLANTILLA — pendiente de testimonios reales de Javier.
+ */
+
+import { useRef, useEffect, useState, useMemo } from 'react'
+import { useCopy } from '@/lib/copy'
+
+const TESTIMONIAL_NAMES = ['Javier M.', 'Elena R.', 'Carlos G.']
+
+const TESTIMONIAL_STYLES: { bg: string; border?: string }[] = [
+  { bg: '#fbf8f4', border: '1px solid rgba(30, 19, 16, 0.08)' },
+  { bg: '#fbf8f4', border: '1px solid rgba(30, 19, 16, 0.08)' },
+  { bg: '#fbf8f4', border: '1px solid rgba(30, 19, 16, 0.08)' },
+]
+
+export default function SocialProofSection() {
+  const { getCopy } = useCopy()
+
+  const testimonials = useMemo(() => TESTIMONIAL_STYLES.map((style, i) => ({
+    quote: getCopy(`socialproof.t${i + 1}.quote`),
+    author: getCopy(`socialproof.t${i + 1}.author`),
+    name: TESTIMONIAL_NAMES[i],
+    ...style,
+  })), [getCopy])
+  const sectionRef = useRef<HTMLElement>(null)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.15 }
+    )
+    const el = sectionRef.current
+    if (el) observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <section
+      ref={sectionRef}
+      aria-label="Testimonios"
+      style={{
+        paddingTop: 'var(--space-8)',
+        paddingBottom: 'var(--space-16)',
+        paddingLeft: 'var(--container-padding-mobile)',
+        paddingRight: 'var(--container-padding-mobile)',
+        position: 'relative',
+        zIndex: 1,
+      }}
+    >
+      <div style={{ maxWidth: '960px', margin: '0 auto' }}>
+        {/* Overline */}
+        <p
+          className="overline-accent"
+          style={{
+            textAlign: 'center',
+            opacity: visible ? 1 : 0,
+            transition: 'opacity 500ms var(--ease-out-expo)',
+          }}
+        >
+          {getCopy('socialproof.overline')}
+        </p>
+
+        {/* Headline */}
+        <h2
+          style={{
+            fontFamily: 'var(--font-host-grotesk)',
+            fontSize: 'var(--text-h2)',
+            lineHeight: 1.2,
+            letterSpacing: '-0.01em',
+            fontWeight: 400,
+            color: 'var(--color-text-primary)',
+            textAlign: 'center',
+            marginBottom: 'var(--space-10)',
+            opacity: visible ? 1 : 0,
+            transform: visible ? 'translateY(0)' : 'translateY(12px)',
+            transition: 'opacity 500ms var(--ease-out-expo) 100ms, transform 500ms var(--ease-out-expo) 100ms',
+          }}
+        >
+          {getCopy('socialproof.headline')}
+        </h2>
+
+        {/* Testimonial cards */}
+        <div className="testimonials-grid">
+          {testimonials.map((t, index) => (
+            <div
+              key={index}
+              style={{
+                background: t.bg,
+                border: t.border || '1px solid rgba(30, 19, 16, 0.08)',
+                borderRadius: '20px',
+                padding: 'var(--space-8)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 'var(--space-4)',
+                opacity: visible ? 1 : 0,
+                transform: visible ? 'none' : 'translateY(20px)',
+                transition: `opacity 500ms var(--ease-out-expo) ${200 + index * 200}ms,
+                             transform 500ms var(--ease-out-expo) ${200 + index * 200}ms`,
+              }}
+            >
+              {/* Cita + nombre */}
+              <p
+                style={{
+                  fontFamily: 'var(--font-host-grotesk)',
+                  fontSize: 'var(--text-body)',
+                  lineHeight: 'var(--lh-body)',
+                  color: 'var(--color-text-primary)',
+                  flex: 1,
+                }}
+              >
+                &ldquo;{t.quote}&rdquo;{' '}
+                <strong style={{ fontWeight: 600 }}>{t.name}</strong>
+              </p>
+
+              {/* Badge pill oscuro */}
+              <span
+                style={{
+                  display: 'inline-block',
+                  alignSelf: 'flex-start',
+                  backgroundColor: 'var(--color-text-secondary)',
+                  color: 'var(--color-text-inverse)',
+                  borderRadius: 'var(--radius-pill)',
+                  padding: '6px 16px',
+                  fontFamily: 'var(--font-host-grotesk)',
+                  fontSize: 'var(--text-caption)',
+                  fontWeight: 500,
+                }}
+              >
+                {t.author}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
