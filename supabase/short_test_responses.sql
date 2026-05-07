@@ -5,7 +5,8 @@
 
 create table if not exists public.short_test_responses (
   id              uuid primary key default gen_random_uuid(),
-  email           text not null unique,
+  whatsapp        text not null unique,        -- clave de identidad del lead
+  email           text,                         -- opcional: se inyecta cuando se conoce desde el DB de leads del test largo
   p1              text not null check (p1 in ('A','B','C','D','E')),
   p2              text not null check (p2 in ('A','B','C','D','E')),
   p3              text not null check (p3 in ('A','B','C','D','E')),
@@ -23,6 +24,7 @@ create table if not exists public.short_test_responses (
 
 create index if not exists idx_short_test_bucket on public.short_test_responses(bucket);
 create index if not exists idx_short_test_created on public.short_test_responses(created_at desc);
+create index if not exists idx_short_test_whatsapp on public.short_test_responses(whatsapp);
 
 -- Trigger de updated_at
 create or replace function public.touch_short_test_updated_at()

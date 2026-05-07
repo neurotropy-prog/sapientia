@@ -32,7 +32,10 @@ import {
 export const runtime = 'nodejs'
 
 interface RequestBody {
-  email: string
+  whatsapp: string
+  /** Email opcional — el lead viene del DB de leads del test largo, ya tenemos el email
+   *  asociado al WhatsApp en el matching posterior. Si se pasa, se persiste. */
+  email?: string
   p1: 'A' | 'B' | 'C' | 'D' | 'E'
   p2: 'A' | 'B' | 'C' | 'D' | 'E'
   p3: 'A' | 'B' | 'C' | 'D' | 'E'
@@ -48,6 +51,14 @@ function isEmailValid(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
 }
 
+function isWhatsAppValid(phone: string): boolean {
+  return /^\+?\d{7,15}$/.test(phone.replace(/[\s\-().]/g, ''))
+}
+
+function normalizeWhatsApp(phone: string): string {
+  return phone.replace(/[\s\-().]/g, '')
+}
+
 function isOptId(s: unknown): s is 'A' | 'B' | 'C' | 'D' | 'E' {
   return typeof s === 'string' && ['A', 'B', 'C', 'D', 'E'].includes(s)
 }
@@ -61,7 +72,10 @@ export async function POST(req: Request) {
   }
 
   // Validación
-  if (!isEmailValid(body.email)) {
+  if (typeof body.whatsapp !== 'string' || !isWhatsAppValid(body.whatsapp)) {
+    return NextResponse.json({ ok: false, error: 'invalid_whatsapp' }, { status: 400 })
+  }
+  if (body.email !== undefined && !isEmailValid(body.email)) {
     return NextResponse.json({ ok: false, error: 'invalid_email' }, { status: 400 })
   }
   for (const k of ['p1', 'p2', 'p3', 'p4'] as const) {
@@ -70,11 +84,14 @@ export async function POST(req: Request) {
     }
   }
   const p5 = typeof body.p5 === 'string' ? body.p5.slice(0, 200) : undefined
+  const whatsapp = normalizeWhatsApp(body.whatsapp)
+  const email = body.email?.trim().toLowerCase()
 
   const answers: ShortTestAnswers = { p1: body.p1, p2: body.p2, p3: body.p3, p4: body.p4, p5 }
   const result = classify(answers)
 
   // 1. Persistencia (Supabase). Si falla, devolvemos el resultado igual.
+  //    Clave primaria de unicidad: whatsapp (un lead, una fila — la última gana).
   try {
     const supabase = createClient(
       process.env.SUPABASE_URL!,
@@ -83,7 +100,8 @@ export async function POST(req: Request) {
     )
     await supabase.from('short_test_responses').upsert(
       {
-        email: body.email.trim().toLowerCase(),
+        whatsapp,
+        email: email ?? null,
         p1: body.p1, p2: body.p2, p3: body.p3, p4: body.p4,
         p5,
         bucket: result.bucket,
@@ -94,33 +112,36 @@ export async function POST(req: Request) {
         secondary_buckets: result.secondary,
         created_at: new Date().toISOString(),
       },
-      { onConflict: 'email' },
+      { onConflict: 'whatsapp' },
     )
   } catch (e) {
     console.error('[test-corto] supabase_error', e)
   }
 
-  // 2. + 3. Resend: añadir a audiencia con property bucket + enviar Day 0
-  try {
-    const resend = new Resend(process.env.RESEND_API_KEY!)
-    if (RESEND_AUDIENCE_ID) {
-      // Idempotente — si ya existe el contacto Resend devuelve error que ignoramos
-      await resend.contacts.create({
-        email: body.email.trim().toLowerCase(),
-        audienceId: RESEND_AUDIENCE_ID,
-        unsubscribed: false,
-        // @ts-expect-error — properties soportado en API actual de Resend, no tipado en el SDK
-        properties: { bucket: result.bucket },
+  // 2. + 3. Resend: SOLO si tenemos email (puede venir del DB de leads del test largo,
+  //    no del form actual). Si el email es null, saltamos el envío — el follow-up
+  //    saldrá por WhatsApp.
+  if (email) {
+    try {
+      const resend = new Resend(process.env.RESEND_API_KEY!)
+      if (RESEND_AUDIENCE_ID) {
+        await resend.contacts.create({
+          email,
+          audienceId: RESEND_AUDIENCE_ID,
+          unsubscribed: false,
+          // @ts-expect-error — properties soportado en API actual de Resend, no tipado en el SDK
+          properties: { bucket: result.bucket, whatsapp },
+        })
+      }
+      await resend.emails.send({
+        from: process.env.RESEND_FROM ?? 'Instituto Epigenético <hola@institutoepigenetico.com>',
+        to: email,
+        subject: SUBJECT_BY_BUCKET[result.bucket],
+        html: bodyHtml(result.bucket),
       })
+    } catch (e) {
+      console.error('[test-corto] resend_error', e)
     }
-    await resend.emails.send({
-      from: process.env.RESEND_FROM ?? 'Instituto Epigenético <hola@institutoepigenetico.com>',
-      to: body.email.trim().toLowerCase(),
-      subject: SUBJECT_BY_BUCKET[result.bucket],
-      html: bodyHtml(result.bucket),
-    })
-  } catch (e) {
-    console.error('[test-corto] resend_error', e)
   }
 
   return NextResponse.json({ ok: true, result })

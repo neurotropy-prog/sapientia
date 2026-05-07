@@ -30,7 +30,7 @@ import {
   type BucketResult,
 } from '@/lib/short-test-data'
 
-type Phase = 'p1' | 'p2' | 'p3' | 'p4' | 'p5' | 'email' | 'result'
+type Phase = 'p1' | 'p2' | 'p3' | 'p4' | 'p5' | 'whatsapp' | 'result'
 type Zone = 'exploracion' | 'reflexion' | 'revelacion'
 
 const PROGRESS: Record<Phase, number> = {
@@ -39,7 +39,7 @@ const PROGRESS: Record<Phase, number> = {
   p3: 50,
   p4: 68,
   p5: 80,
-  email: 92,
+  whatsapp: 92,
   result: 100,
 }
 
@@ -49,7 +49,7 @@ const ZONE_BY_PHASE: Record<Phase, Zone> = {
   p3: 'exploracion',
   p4: 'exploracion',
   p5: 'reflexion',
-  email: 'reflexion',
+  whatsapp: 'reflexion',
   result: 'revelacion',
 }
 
@@ -58,7 +58,7 @@ const PREV_PHASE: Partial<Record<Phase, Phase>> = {
   p3: 'p2',
   p4: 'p3',
   p5: 'p4',
-  email: 'p5',
+  whatsapp: 'p5',
 }
 
 const STORAGE_KEY = 'neurobienestar_short_test'
@@ -68,6 +68,7 @@ interface SavedState {
   phase: Phase
   answers: Partial<ShortTestAnswers>
   openText: string
+  whatsapp?: string
   savedAt: number
 }
 
@@ -93,8 +94,15 @@ function clearSaved() {
   try { localStorage.removeItem(STORAGE_KEY) } catch { /* no-op */ }
 }
 
-function isEmailValid(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
+/** Acepta teléfono internacional flexible: + opcional, espacios/guiones, 7-15 dígitos. */
+function isWhatsAppValid(phone: string): boolean {
+  const digits = phone.replace(/[\s\-().]/g, '')
+  return /^\+?\d{7,15}$/.test(digits)
+}
+
+/** Normaliza para storage: quita espacios/guiones, mantiene + si está. */
+function normalizeWhatsApp(phone: string): string {
+  return phone.replace(/[\s\-().]/g, '')
 }
 
 export default function ShortTestController() {
@@ -105,7 +113,7 @@ export default function ShortTestController() {
   const [isExiting, setIsExiting] = useState(false)
   const [answers, setAnswers] = useState<Partial<ShortTestAnswers>>(restored?.answers ?? {})
   const [openText, setOpenText] = useState(restored?.openText ?? '')
-  const [email, setEmail] = useState('')
+  const [whatsapp, setWhatsApp] = useState(restored?.whatsapp ?? '')
   const [submitting, setSubmitting] = useState(false)
   const [result, setResult] = useState<BucketResult | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -126,10 +134,10 @@ export default function ShortTestController() {
       setPhase(next)
       setPhaseKey(k => k + 1)
       setIsExiting(false)
-      if (next !== 'result') save({ phase: next, answers: a, openText: o })
+      if (next !== 'result') save({ phase: next, answers: a, openText: o, whatsapp })
       setTimeout(() => overlayRef.current?.scrollTo({ top: 0, behavior: 'smooth' }), 50)
     }, 400)
-  }, [answers, openText])
+  }, [answers, openText, whatsapp])
 
   const handleBack = useCallback(() => {
     const prev = PREV_PHASE[phase]
@@ -144,14 +152,14 @@ export default function ShortTestController() {
       setError('Faltan respuestas')
       return
     }
-    if (!isEmailValid(email)) {
-      setError('Email inválido')
+    if (!isWhatsAppValid(whatsapp)) {
+      setError('Número inválido. Incluye prefijo de país (ej. +52 55 1234 5678)')
       return
     }
     setSubmitting(true)
     setError(null)
     const payload = {
-      email: email.trim(),
+      whatsapp: normalizeWhatsApp(whatsapp),
       p1: answers.p1, p2: answers.p2, p3: answers.p3, p4: answers.p4,
       p5: openText.trim() || undefined,
     }
@@ -164,18 +172,18 @@ export default function ShortTestController() {
       })
       if (res.ok) {
         const data = await res.json()
-        computed = data.result ?? classify(payload as ShortTestAnswers)
+        computed = data.result ?? classify(answers as ShortTestAnswers)
       } else {
-        computed = classify(payload as ShortTestAnswers)
+        computed = classify(answers as ShortTestAnswers)
       }
     } catch {
-      computed = classify(payload as ShortTestAnswers)
+      computed = classify(answers as ShortTestAnswers)
     }
     setResult(computed)
     clearSaved()
     setSubmitting(false)
     changePhase('result')
-  }, [answers, email, openText, changePhase])
+  }, [answers, whatsapp, openText, changePhase])
 
   const zone = ZONE_BY_PHASE[phase]
   const progress = PROGRESS[phase]
@@ -309,15 +317,15 @@ export default function ShortTestController() {
             <FreeTextStep
               value={openText}
               onChange={setOpenText}
-              onContinue={() => changePhase('email')}
-              onSkip={() => { setOpenText(''); changePhase('email') }}
+              onContinue={() => changePhase('whatsapp')}
+              onSkip={() => { setOpenText(''); changePhase('whatsapp') }}
             />
           )}
 
-          {phase === 'email' && (
-            <EmailStep
-              email={email}
-              onChange={setEmail}
+          {phase === 'whatsapp' && (
+            <WhatsAppStep
+              value={whatsapp}
+              onChange={setWhatsApp}
               error={error}
               submitting={submitting}
               onSubmit={submit}
@@ -362,20 +370,20 @@ function FreeTextStep({
   )
 }
 
-function EmailStep({
-  email, onChange, error, submitting, onSubmit,
-}: { email: string; onChange: (v: string) => void; error: string | null; submitting: boolean; onSubmit: () => void }) {
-  const valid = isEmailValid(email)
+function WhatsAppStep({
+  value, onChange, error, submitting, onSubmit,
+}: { value: string; onChange: (v: string) => void; error: string | null; submitting: boolean; onSubmit: () => void }) {
+  const valid = isWhatsAppValid(value)
   return (
     <div>
-      <h2 style={questionHeading}>¿A qué email te enviamos tu resultado?</h2>
-      <p style={contextText}>Vas a recibir el primer paso del protocolo en cuestión de minutos.</p>
+      <h2 style={questionHeading}>¿A qué número de WhatsApp quieres que te enviemos el resultado?</h2>
+      <p style={contextText}>Vamos a contactarte por WhatsApp con el primer paso del protocolo. Incluye el prefijo de país.</p>
       <input
-        type="email"
-        inputMode="email"
-        autoComplete="email"
-        placeholder="tu@email.com"
-        value={email}
+        type="tel"
+        inputMode="tel"
+        autoComplete="tel"
+        placeholder="+52 55 1234 5678"
+        value={value}
         onChange={(e) => onChange(e.target.value)}
         style={inputStyle}
       />
@@ -385,7 +393,7 @@ function EmailStep({
         disabled={!valid || submitting}
         onClick={onSubmit}
       >
-        {submitting ? 'Enviando…' : 'Recibir mi resultado'}
+        {submitting ? 'Enviando…' : 'Ver mi resultado'}
       </button>
       <div style={{ height: '60px' }} />
     </div>
