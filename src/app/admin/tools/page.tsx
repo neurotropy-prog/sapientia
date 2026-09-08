@@ -548,7 +548,7 @@ export default function ToolsPage() {
                       width: '8px',
                       height: '8px',
                       borderRadius: '50%',
-                      backgroundColor: unlocked ? 'var(--color-success)' : 'rgba(38,66,51,0.15)',
+                      backgroundColor: unlocked ? 'var(--color-success)' : 'rgba(50, 66, 55,0.15)',
                       flexShrink: 0,
                     }}
                   />
@@ -636,7 +636,7 @@ export default function ToolsPage() {
                   width: 8,
                   height: 8,
                   borderRadius: '50%',
-                  backgroundColor: pdfInfo?.exists ? 'var(--color-success)' : 'rgba(38,66,51,0.15)',
+                  backgroundColor: pdfInfo?.exists ? 'var(--color-success)' : 'rgba(50, 66, 55,0.15)',
                   flexShrink: 0,
                 }}
               />

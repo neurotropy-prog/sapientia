@@ -77,7 +77,7 @@ export default function EvolutionChart({
       pad.top + plotH - ((score - minScore) / (maxScore - minScore)) * plotH
 
     // Grid lines (horizontal)
-    ctx.strokeStyle = 'rgba(38,66,51,0.06)'
+    ctx.strokeStyle = 'rgba(50, 66, 55,0.06)'
     ctx.lineWidth = 1
     for (let s = Math.ceil(minScore / 20) * 20; s <= maxScore; s += 20) {
       const y = yScale(s)
@@ -87,7 +87,7 @@ export default function EvolutionChart({
       ctx.stroke()
 
       // Label
-      ctx.fillStyle = 'rgba(38,66,51,0.25)'
+      ctx.fillStyle = 'rgba(50, 66, 55,0.25)'
       ctx.font = '10px system-ui, sans-serif'
       ctx.textAlign = 'right'
       ctx.fillText(String(s), pad.left - 6, y + 3)
@@ -148,7 +148,7 @@ export default function EvolutionChart({
       ctx.fillText(String(p.score), x, y - 14)
 
       // Day label below
-      ctx.fillStyle = 'rgba(38,66,51,0.4)'
+      ctx.fillStyle = 'rgba(50, 66, 55,0.4)'
       ctx.font = '10px system-ui, sans-serif'
       ctx.fillText(p.label, x, H - pad.bottom + 16)
     })

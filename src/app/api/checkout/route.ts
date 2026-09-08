@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     }, { status: 503 })
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://lars.institutoepigenetico.com'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://lars.neurotropy.com'
   const mapaUrl = `${baseUrl}/mapa/${hash}`
 
   try {

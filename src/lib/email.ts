@@ -3,7 +3,7 @@
  *
  * Email día 0: se envía inmediatamente al capturar el email.
  * Template minimalista, fondo blanco, personal — per spec Four Seasons.
- * Identidad: Logo IE + fondo #FFFFFF + botones #264233 + acento #CD796C.
+ * Identidad: Logo IE + fondo #FFFFFF + botones #324237 + acento #CD796C.
  * Sin logos agresivos, sin footer corporativo. El email es un mensajero.
  *
  * Requiere: RESEND_API_KEY en variables de entorno
@@ -43,7 +43,7 @@ function getResend(): Resend {
 
 // El dominio desde el que se envía — configura este email en Resend
 // Ver: resend.com/domains → añadir y verificar tu dominio
-const FROM_EMAIL = 'Javier · Instituto Epigenético <regulacion@institutoepigenetico.com>'
+const FROM_EMAIL = 'Javier · Neurotropy <regulacion@neurotropy.com>'
 
 // Fallback durante desarrollo/test — Resend permite enviar a cualquier email
 // con tu propio dominio verificado. En test, usa 'onboarding@resend.dev' como from.
@@ -55,7 +55,7 @@ function getFromEmail(): string {
 }
 
 function getBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_BASE_URL ?? 'https://lars.institutoepigenetico.com'
+  return process.env.NEXT_PUBLIC_BASE_URL ?? 'https://lars.neurotropy.com'
 }
 
 function trackingPixelHtml(mapHash: string, emailKey: string): string {
@@ -127,7 +127,7 @@ export async function sendDia0Email({
 
   const firstStep = firstStepByKey[worstKey]
 
-  // Template HTML minimal — fondo blanco #FFFFFF, botón verde bosque #264233
+  // Template HTML minimal — fondo blanco #FFFFFF, botón verde bosque #324237
   const html = `
 <!DOCTYPE html>
 <html lang="es">
@@ -148,7 +148,7 @@ export async function sendDia0Email({
       <td>
 
         <!-- Header: logo -->
-        <img src="${getBaseUrl()}/Logo-definitivo-IE.png" alt="Instituto Epigenético" width="220" style="display: block; width: 220px; height: auto; margin: 0 0 32px 0;" />
+        <img src="${getBaseUrl()}/Logo-definitivo-IE.png" alt="Neurotropy" width="220" style="display: block; width: 220px; height: auto; margin: 0 0 32px 0;" />
 
         <!-- Score global -->
         <p style="
@@ -174,7 +174,7 @@ export async function sendDia0Email({
         ">Score global de neuroregulación</p>
 
         <!-- Separador -->
-        <div style="height: 1px; background: rgba(38, 66, 51, 0.10); margin-bottom: 32px;"></div>
+        <div style="height: 1px; background: rgba(50, 66, 55, 0.10); margin-bottom: 32px;"></div>
 
         <!-- Dimensión más comprometida -->
         <p style="
@@ -214,7 +214,7 @@ export async function sendDia0Email({
         <table cellpadding="0" cellspacing="0" style="margin-bottom: 40px;">
           <tr>
             <td style="
-              background: #264233;
+              background: #324237;
               border-radius: 100px;
               padding: 16px 32px;
             ">
@@ -231,7 +231,7 @@ export async function sendDia0Email({
         </table>
 
         <!-- Separador -->
-        <div style="height: 1px; background: rgba(38, 66, 51, 0.10); margin-bottom: 32px;"></div>
+        <div style="height: 1px; background: rgba(50, 66, 55, 0.10); margin-bottom: 32px;"></div>
 
         <!-- Footer minimal -->
         <p style="
@@ -256,6 +256,7 @@ export async function sendDia0Email({
 
   await getResend().emails.send({
     from: getFromEmail(),
+    replyTo: 'ayuda@neurotropy.com',
     to,
     subject: override0?.subject ?? EMAIL_DEFAULTS.d0.subject,
     html,
@@ -291,16 +292,16 @@ function buildEvolutionEmail(params: {
 ">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 560px; margin: 0 auto; padding: 48px 24px;">
     <tr><td>
-      <img src="${getBaseUrl()}/Logo-definitivo-IE.png" alt="Instituto Epigenético" width="220" style="display: block; width: 220px; height: auto; margin: 0 0 32px 0;" />
+      <img src="${getBaseUrl()}/Logo-definitivo-IE.png" alt="Neurotropy" width="220" style="display: block; width: 220px; height: auto; margin: 0 0 32px 0;" />
       ${params.content}
       <table cellpadding="0" cellspacing="0" style="margin: 32px 0;">
-        <tr><td style="background: #264233; border-radius: 100px; padding: 16px 32px;">
+        <tr><td style="background: #324237; border-radius: 100px; padding: 16px 32px;">
           <a href="${params.mapUrl}" style="color: #FFFFFF; font-size: 15px; font-weight: 500; text-decoration: none; display: block; white-space: nowrap;">
             ${params.buttonText}
           </a>
         </td></tr>
       </table>
-      <div style="height: 1px; background: rgba(38, 66, 51, 0.10); margin-bottom: 24px;"></div>
+      <div style="height: 1px; background: rgba(50, 66, 55, 0.10); margin-bottom: 24px;"></div>
       <p style="font-size: 13px; color: #878E92; line-height: 1.6; margin: 0;">
         Este mapa es tuyo. Confidencial. Solo tú puedes verlo.
       </p>
@@ -324,7 +325,7 @@ export async function sendDia1Email(to: string, mapHash: string): Promise<void> 
   // Card visual: preview de Miedos + Necesidades Nucleares
   const fearsNeedsCard = `
     <div style="
-      border: 1px solid rgba(38,66,51,0.15);
+      border: 1px solid rgba(50, 66, 55,0.15);
       border-left: 3px solid #CD796C;
       border-radius: 12px;
       padding: 24px;
@@ -340,17 +341,17 @@ export async function sendDia1Email(to: string, mapHash: string): Promise<void> 
         font-weight: 600;
       ">MIEDOS + NECESIDADES NUCLEARES</p>
 
-      <div style="height: 1px; background: rgba(38,66,51,0.12); margin-bottom: 16px;"></div>
+      <div style="height: 1px; background: rgba(50, 66, 55,0.12); margin-bottom: 16px;"></div>
 
       <p style="font-size: 15px; font-weight: 600; color: #212426; margin: 0 0 12px 0;">
         Tus miedos principales:
       </p>
-      <div style="height: 1px; background: rgba(38,66,51,0.08); margin-bottom: 12px;"></div>
+      <div style="height: 1px; background: rgba(50, 66, 55,0.08); margin-bottom: 12px;"></div>
 
       <p style="font-size: 15px; font-weight: 600; color: #212426; margin: 0 0 12px 0;">
         Tus 3 capas de necesidad:
       </p>
-      <div style="height: 1px; background: rgba(38,66,51,0.08); margin-bottom: 12px;"></div>
+      <div style="height: 1px; background: rgba(50, 66, 55,0.08); margin-bottom: 12px;"></div>
 
       <p style="font-size: 15px; font-weight: 600; color: #212426; margin: 0 0 0 0;">
         Tus patrones de burnout:
@@ -368,7 +369,8 @@ export async function sendDia1Email(to: string, mapHash: string): Promise<void> 
   })
 
   await getResend().emails.send({
-    from: getFromEmail(), to,
+    from: getFromEmail(),
+    replyTo: 'ayuda@neurotropy.com', to,
     subject: override?.subject ?? defaults.subject,
     html, headers: listUnsubscribeHeaders(mapHash),
   })
@@ -391,7 +393,8 @@ export async function sendDia3Email(to: string, mapHash: string): Promise<void> 
   })
 
   await getResend().emails.send({
-    from: getFromEmail(), to,
+    from: getFromEmail(),
+    replyTo: 'ayuda@neurotropy.com', to,
     subject: override?.subject ?? defaults.subject,
     html, headers: listUnsubscribeHeaders(mapHash),
   })
@@ -414,7 +417,8 @@ export async function sendDia6Email(to: string, mapHash: string): Promise<void> 
   })
 
   await getResend().emails.send({
-    from: getFromEmail(), to,
+    from: getFromEmail(),
+    replyTo: 'ayuda@neurotropy.com', to,
     subject: override?.subject ?? defaults.subject,
     html, headers: listUnsubscribeHeaders(mapHash),
   })
@@ -437,7 +441,8 @@ export async function sendDia10Email(to: string, mapHash: string): Promise<void>
   })
 
   await getResend().emails.send({
-    from: getFromEmail(), to,
+    from: getFromEmail(),
+    replyTo: 'ayuda@neurotropy.com', to,
     subject: override?.subject ?? defaults.subject,
     html, headers: listUnsubscribeHeaders(mapHash),
   })
@@ -460,7 +465,8 @@ export async function sendDia30Email(to: string, mapHash: string): Promise<void>
   })
 
   await getResend().emails.send({
-    from: getFromEmail(), to,
+    from: getFromEmail(),
+    replyTo: 'ayuda@neurotropy.com', to,
     subject: override?.subject ?? defaults.subject,
     html, headers: listUnsubscribeHeaders(mapHash),
   })
@@ -492,7 +498,7 @@ export async function sendPostPagoEmail(to: string, mapHash: string): Promise<vo
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 560px; margin: 0 auto; padding: 48px 24px;">
     <tr><td>
 
-      <img src="${getBaseUrl()}/Logo-definitivo-IE.png" alt="Instituto Epigenético" width="220" style="display: block; width: 220px; height: auto; margin: 0 0 32px 0;" />
+      <img src="${getBaseUrl()}/Logo-definitivo-IE.png" alt="Neurotropy" width="220" style="display: block; width: 220px; height: auto; margin: 0 0 32px 0;" />
 
       <p style="font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: #CD796C; margin: 0 0 8px 0;">
         SEMANA 1
@@ -507,7 +513,7 @@ export async function sendPostPagoEmail(to: string, mapHash: string): Promise<vo
       </p>
 
       <!-- Separador -->
-      <div style="height: 1px; background: rgba(38, 66, 51, 0.10); margin-bottom: 32px;"></div>
+      <div style="height: 1px; background: rgba(50, 66, 55, 0.10); margin-bottom: 32px;"></div>
 
       <!-- Protocolo -->
       <p style="font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #878E92; margin: 0 0 8px 0;">
@@ -515,7 +521,7 @@ export async function sendPostPagoEmail(to: string, mapHash: string): Promise<vo
       </p>
 
       <table cellpadding="0" cellspacing="0" style="margin: 0 0 8px 0;">
-        <tr><td style="background: #264233; border-radius: 100px; padding: 14px 28px;">
+        <tr><td style="background: #324237; border-radius: 100px; padding: 14px 28px;">
           <a href="${mapUrl}" style="color: #FFFFFF; font-size: 14px; font-weight: 500; text-decoration: none; display: block; white-space: nowrap;">
             Descargar el Protocolo
           </a>
@@ -528,7 +534,7 @@ export async function sendPostPagoEmail(to: string, mapHash: string): Promise<vo
       </p>
 
       <!-- Separador -->
-      <div style="height: 1px; background: rgba(38, 66, 51, 0.10); margin-bottom: 32px;"></div>
+      <div style="height: 1px; background: rgba(50, 66, 55, 0.10); margin-bottom: 32px;"></div>
 
       <!-- Sesión -->
       <p style="font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #878E92; margin: 0 0 8px 0;">
@@ -536,7 +542,7 @@ export async function sendPostPagoEmail(to: string, mapHash: string): Promise<vo
       </p>
 
       <table cellpadding="0" cellspacing="0" style="margin: 0 0 8px 0;">
-        <tr><td style="background: #264233; border-radius: 100px; padding: 14px 28px;">
+        <tr><td style="background: #324237; border-radius: 100px; padding: 14px 28px;">
           <a href="${bookingUrl}" style="color: #FFFFFF; font-size: 14px; font-weight: 500; text-decoration: none; display: block; white-space: nowrap;">
             ${escapeHtml(ppCtaText)}
           </a>
@@ -549,7 +555,7 @@ export async function sendPostPagoEmail(to: string, mapHash: string): Promise<vo
       </p>
 
       <!-- Separador -->
-      <div style="height: 1px; background: rgba(38, 66, 51, 0.10); margin-bottom: 32px;"></div>
+      <div style="height: 1px; background: rgba(50, 66, 55, 0.10); margin-bottom: 32px;"></div>
 
       <!-- MNN -->
       <p style="font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #878E92; margin: 0 0 8px 0;">
@@ -561,7 +567,7 @@ export async function sendPostPagoEmail(to: string, mapHash: string): Promise<vo
       </p>
 
       <!-- Separador -->
-      <div style="height: 1px; background: rgba(38, 66, 51, 0.10); margin-bottom: 32px;"></div>
+      <div style="height: 1px; background: rgba(50, 66, 55, 0.10); margin-bottom: 32px;"></div>
 
       <!-- Garantía -->
       <p style="font-size: 14px; color: #2D2D2D; line-height: 1.6; margin: 0 0 8px 0;">
@@ -572,14 +578,14 @@ export async function sendPostPagoEmail(to: string, mapHash: string): Promise<vo
       </p>
 
       <!-- Separador -->
-      <div style="height: 1px; background: rgba(38, 66, 51, 0.10); margin-bottom: 32px;"></div>
+      <div style="height: 1px; background: rgba(50, 66, 55, 0.10); margin-bottom: 32px;"></div>
 
       <!-- Firma -->
       <p style="font-size: 14px; color: #212426; margin: 0 0 4px 0;">
         Javier A. Martín Ramos
       </p>
       <p style="font-size: 13px; color: #878E92; margin: 0;">
-        Director · Instituto Epigenético
+        Director · Neurotropy
       </p>
 
       ${unsubscribeFooterHtml(mapHash)}
@@ -591,6 +597,7 @@ export async function sendPostPagoEmail(to: string, mapHash: string): Promise<vo
 
   await getResend().emails.send({
     from: getFromEmail(),
+    replyTo: 'ayuda@neurotropy.com',
     to,
     subject: overridePP?.subject ?? defaultsPP.subject,
     html,
@@ -633,7 +640,7 @@ export async function sendAmplifyComparisonReadyEmail({
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 560px; margin: 0 auto; padding: 48px 24px;">
     <tr><td>
 
-      <img src="${getBaseUrl()}/Logo-definitivo-IE.png" alt="Instituto Epigenético" width="220" style="display: block; width: 220px; height: auto; margin: 0 0 32px 0;" />
+      <img src="${getBaseUrl()}/Logo-definitivo-IE.png" alt="Neurotropy" width="220" style="display: block; width: 220px; height: auto; margin: 0 0 32px 0;" />
 
       <p style="
         font-size: 13px;
@@ -659,14 +666,14 @@ export async function sendAmplifyComparisonReadyEmail({
       ">Ahora podéis ver cómo se comparan vuestras dimensiones. Las brechas compartidas revelan lo que ningún mapa individual puede mostrar.</p>
 
       <table cellpadding="0" cellspacing="0" style="margin: 0 0 32px 0;">
-        <tr><td style="background: #264233; border-radius: 100px; padding: 16px 32px;">
+        <tr><td style="background: #324237; border-radius: 100px; padding: 16px 32px;">
           <a href="${compareUrl}" style="color: #FFFFFF; font-size: 15px; font-weight: 500; text-decoration: none; display: block; white-space: nowrap;">
             ${escapeHtml(override?.cta_text ?? defaults.ctaText)}
           </a>
         </td></tr>
       </table>
 
-      <div style="height: 1px; background: rgba(38, 66, 51, 0.10); margin-bottom: 24px;"></div>
+      <div style="height: 1px; background: rgba(50, 66, 55, 0.10); margin-bottom: 24px;"></div>
 
       <p style="font-size: 13px; color: #878E92; line-height: 1.6; margin: 0;">
         Confidencial. Solo vosotros dos podéis ver esto.
@@ -682,6 +689,7 @@ export async function sendAmplifyComparisonReadyEmail({
 
   await getResend().emails.send({
     from: getFromEmail(),
+    replyTo: 'ayuda@neurotropy.com',
     to,
     subject: override?.subject ?? defaults.subject,
     html,
@@ -704,7 +712,8 @@ export async function sendDia90Email(to: string, mapHash: string): Promise<void>
   })
 
   await getResend().emails.send({
-    from: getFromEmail(), to,
+    from: getFromEmail(),
+    replyTo: 'ayuda@neurotropy.com', to,
     subject: override?.subject ?? defaults.subject,
     html, headers: listUnsubscribeHeaders(mapHash),
   })
@@ -740,7 +749,7 @@ export async function sendGoodbyeEmail(to: string, mapHash: string): Promise<voi
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 560px; margin: 0 auto; padding: 48px 24px;">
     <tr><td>
 
-      <img src="${getBaseUrl()}/Logo-definitivo-IE.png" alt="Instituto Epigenético" width="220" style="display: block; width: 220px; height: auto; margin: 0 0 32px 0;" />
+      <img src="${getBaseUrl()}/Logo-definitivo-IE.png" alt="Neurotropy" width="220" style="display: block; width: 220px; height: auto; margin: 0 0 32px 0;" />
 
       ${gbBodyHtml}
 
@@ -761,7 +770,7 @@ export async function sendGoodbyeEmail(to: string, mapHash: string): Promise<voi
       </p>
 
       <table cellpadding="0" cellspacing="0" style="margin: 0 0 16px 0;">
-        <tr><td style="background: #264233; border-radius: 100px; padding: 16px 32px;">
+        <tr><td style="background: #324237; border-radius: 100px; padding: 16px 32px;">
           <a href="${reactivateUrl}" style="color: #FFFFFF; font-size: 15px; font-weight: 500; text-decoration: none; display: block; white-space: nowrap;">
             ${escapeHtml(gbCtaText)}
           </a>
@@ -773,13 +782,13 @@ export async function sendGoodbyeEmail(to: string, mapHash: string): Promise<voi
       </p>
 
       <!-- Separador -->
-      <div style="height: 1px; background: rgba(38, 66, 51, 0.10); margin-bottom: 32px;"></div>
+      <div style="height: 1px; background: rgba(50, 66, 55, 0.10); margin-bottom: 32px;"></div>
 
       <p style="font-size: 14px; color: #212426; line-height: 1.6; margin: 0 0 4px 0;">
         Javier A. Martín Ramos
       </p>
       <p style="font-size: 13px; color: #878E92; margin: 0 0 24px 0;">
-        Director · Instituto Epigenético
+        Director · Neurotropy
       </p>
 
       <p style="font-size: 12px; color: #878E92; margin: 0;">
@@ -794,7 +803,8 @@ export async function sendGoodbyeEmail(to: string, mapHash: string): Promise<voi
 </html>`
 
   await getResend().emails.send({
-    from: getFromEmail(), to,
+    from: getFromEmail(),
+    replyTo: 'ayuda@neurotropy.com', to,
     subject: overrideGb?.subject ?? defaultsGb.subject,
     html,
   })

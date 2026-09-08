@@ -1,7 +1,7 @@
 'use client'
 
 /**
- * ShortTestController — Test corto de 4 preguntas + textarea + email.
+ * ShortTestController — Test corto de 4 preguntas + textarea + identidad flexible.
  *
  * Replica el chrome del LARS GatewayBloque1:
  *   - Sticky header con título de sección + Volver + ProgressBar
@@ -9,8 +9,14 @@
  *   - Cross-fade entre pasos (step-enter / step-exit)
  *   - SingleSelectStep para P1-P4
  *
- * Flujo: P1 ansiedad → P2 sueño → P3 fatiga → P4 estrés → P5 textarea (opcional)
- *        → email → /api/test-corto → pantalla de resultado con bucket.
+ * Identidad:
+ *   - Si la URL trae `?ref=<hash>`, ya conocemos el email del lead vía sapientia.leads.
+ *     El paso de email se salta — pasamos directo a WhatsApp.
+ *   - Si no hay ref, pedimos email (obligatorio) y luego WhatsApp (opcional).
+ *   - WhatsApp siempre tiene "Saltar"; el test se guarda igual con la identidad que tengamos.
+ *
+ * Idioma: hablamos siempre de "recomendaciones", nunca de "resultado" — con 4 preguntas
+ *         no se entrega diagnóstico, se entregan pistas para el siguiente paso.
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react'
@@ -30,15 +36,16 @@ import {
   type BucketResult,
 } from '@/lib/short-test-data'
 
-type Phase = 'p1' | 'p2' | 'p3' | 'p4' | 'p5' | 'whatsapp' | 'result'
+type Phase = 'p1' | 'p2' | 'p3' | 'p4' | 'p5' | 'email' | 'whatsapp' | 'result'
 type Zone = 'exploracion' | 'reflexion' | 'revelacion'
 
 const PROGRESS: Record<Phase, number> = {
-  p1: 15,
-  p2: 32,
-  p3: 50,
-  p4: 68,
-  p5: 80,
+  p1: 12,
+  p2: 28,
+  p3: 44,
+  p4: 60,
+  p5: 72,
+  email: 82,
   whatsapp: 92,
   result: 100,
 }
@@ -49,16 +56,9 @@ const ZONE_BY_PHASE: Record<Phase, Zone> = {
   p3: 'exploracion',
   p4: 'exploracion',
   p5: 'reflexion',
+  email: 'reflexion',
   whatsapp: 'reflexion',
   result: 'revelacion',
-}
-
-const PREV_PHASE: Partial<Record<Phase, Phase>> = {
-  p2: 'p1',
-  p3: 'p2',
-  p4: 'p3',
-  p5: 'p4',
-  whatsapp: 'p5',
 }
 
 const STORAGE_KEY = 'neurobienestar_short_test'
@@ -68,6 +68,7 @@ interface SavedState {
   phase: Phase
   answers: Partial<ShortTestAnswers>
   openText: string
+  email?: string
   whatsapp?: string
   savedAt: number
 }
@@ -94,38 +95,67 @@ function clearSaved() {
   try { localStorage.removeItem(STORAGE_KEY) } catch { /* no-op */ }
 }
 
-/** Acepta teléfono internacional flexible: + opcional, espacios/guiones, 7-15 dígitos. */
+function isEmailValid(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
+}
+
 function isWhatsAppValid(phone: string): boolean {
   const digits = phone.replace(/[\s\-().]/g, '')
   return /^\+?\d{7,15}$/.test(digits)
 }
 
-/** Normaliza para storage: quita espacios/guiones, mantiene + si está. */
 function normalizeWhatsApp(phone: string): string {
   return phone.replace(/[\s\-().]/g, '')
 }
 
+function readRefFromUrl(): string | undefined {
+  if (typeof window === 'undefined') return undefined
+  try {
+    const params = new URLSearchParams(window.location.search)
+    const ref = params.get('ref')
+    if (ref && /^[A-Za-z0-9_-]{4,64}$/.test(ref)) return ref
+  } catch { /* no-op */ }
+  return undefined
+}
+
 export default function ShortTestController() {
   const [restored] = useState(() => (typeof window !== 'undefined' ? loadSaved() : null))
+  // ref se lee del URL una sola vez al montar; no es interactivo
+  const [ref] = useState<string | undefined>(() => readRefFromUrl())
   const overlayRef = useRef<HTMLDivElement>(null)
   const [phase, setPhase] = useState<Phase>(restored?.phase ?? 'p1')
   const [phaseKey, setPhaseKey] = useState(0)
   const [isExiting, setIsExiting] = useState(false)
   const [answers, setAnswers] = useState<Partial<ShortTestAnswers>>(restored?.answers ?? {})
   const [openText, setOpenText] = useState(restored?.openText ?? '')
+  const [email, setEmail] = useState(restored?.email ?? '')
   const [whatsapp, setWhatsApp] = useState(restored?.whatsapp ?? '')
   const [submitting, setSubmitting] = useState(false)
   const [result, setResult] = useState<BucketResult | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  // Lock scroll mientras el test está activo (igual que LARS GatewayBloque1)
+  // Si la URL trae ref, no hace falta pedir email
+  const hasRefIdentity = !!ref
+
+  // Lock scroll mientras el test está activo
   useEffect(() => {
     document.body.style.overflow = 'hidden'
     return () => { document.body.style.overflow = '' }
   }, [])
 
+  // Mapa de paso anterior — depende de si hay ref (porque saltamos 'email' o no)
+  const prevPhase: Partial<Record<Phase, Phase>> = {
+    p2: 'p1',
+    p3: 'p2',
+    p4: 'p3',
+    p5: 'p4',
+    email: 'p5',
+    whatsapp: hasRefIdentity ? 'p5' : 'email',
+  }
+
   const changePhase = useCallback((next: Phase, nextAnswers?: Partial<ShortTestAnswers>, nextOpenText?: string) => {
     setIsExiting(true)
+    setError(null)
     setTimeout(() => {
       const a = nextAnswers ?? answers
       const o = nextOpenText ?? openText
@@ -134,35 +164,53 @@ export default function ShortTestController() {
       setPhase(next)
       setPhaseKey(k => k + 1)
       setIsExiting(false)
-      if (next !== 'result') save({ phase: next, answers: a, openText: o, whatsapp })
+      if (next !== 'result') save({ phase: next, answers: a, openText: o, email, whatsapp })
       setTimeout(() => overlayRef.current?.scrollTo({ top: 0, behavior: 'smooth' }), 50)
     }, 400)
-  }, [answers, openText, whatsapp])
+  }, [answers, openText, email, whatsapp])
 
   const handleBack = useCallback(() => {
-    const prev = PREV_PHASE[phase]
+    const prev = prevPhase[phase]
     if (prev) changePhase(prev)
-  }, [phase, changePhase])
+  }, [phase, changePhase, prevPhase])
 
   const handleSelect = (key: keyof ShortTestAnswers, next: Phase) =>
     (id: string) => changePhase(next, { ...answers, [key]: id as ShortOption['id'] })
 
-  const submit = useCallback(async () => {
+  /** Único punto de envío al backend. Se llama desde WhatsApp (submit o skip). */
+  const submit = useCallback(async (overrideWhatsapp?: string | null) => {
     if (!answers.p1 || !answers.p2 || !answers.p3 || !answers.p4) {
       setError('Faltan respuestas')
       return
     }
-    if (!isWhatsAppValid(whatsapp)) {
-      setError('Número inválido. Incluye prefijo de país (ej. +52 55 1234 5678)')
+    const effectiveEmail = email.trim().toLowerCase()
+    const effectiveWhatsapp = overrideWhatsapp === null ? '' : (overrideWhatsapp ?? whatsapp).trim()
+
+    // Identidad: ref (URL) OR email (form) OR whatsapp (form)
+    if (!ref && !effectiveEmail && !effectiveWhatsapp) {
+      setError('Necesitamos al menos un email o un WhatsApp para enviarte las recomendaciones')
       return
     }
+    if (effectiveEmail && !isEmailValid(effectiveEmail)) {
+      setError('Email inválido')
+      return
+    }
+    if (effectiveWhatsapp && !isWhatsAppValid(effectiveWhatsapp)) {
+      setError('Número de WhatsApp inválido. Incluye prefijo de país (ej. +52 55 1234 5678)')
+      return
+    }
+
     setSubmitting(true)
     setError(null)
-    const payload = {
-      whatsapp: normalizeWhatsApp(whatsapp),
+
+    const payload: Record<string, unknown> = {
       p1: answers.p1, p2: answers.p2, p3: answers.p3, p4: answers.p4,
       p5: openText.trim() || undefined,
     }
+    if (ref) payload.ref = ref
+    if (effectiveEmail) payload.email = effectiveEmail
+    if (effectiveWhatsapp) payload.whatsapp = normalizeWhatsApp(effectiveWhatsapp)
+
     let computed: BucketResult
     try {
       const res = await fetch('/api/test-corto', {
@@ -183,11 +231,11 @@ export default function ShortTestController() {
     clearSaved()
     setSubmitting(false)
     changePhase('result')
-  }, [answers, whatsapp, openText, changePhase])
+  }, [answers, email, whatsapp, openText, ref, changePhase])
 
   const zone = ZONE_BY_PHASE[phase]
   const progress = PROGRESS[phase]
-  const progressLabel = `Tu análisis: ${progress}% completo`
+  const progressLabel = `Tu evaluación: ${progress}% completa`
 
   // ─── RENDER ───────────────────────────────────────────────────────────────
 
@@ -243,10 +291,10 @@ export default function ShortTestController() {
             >
               Mapa rápido de neurorregulación
             </p>
-            {PREV_PHASE[phase] && phase !== 'result' && (
+            {prevPhase[phase] && phase !== 'result' && (
               <button
                 onClick={handleBack}
-                aria-label="Volver a la pregunta anterior"
+                aria-label="Volver al paso anterior"
                 style={{
                   background: 'none',
                   border: 'none',
@@ -317,8 +365,21 @@ export default function ShortTestController() {
             <FreeTextStep
               value={openText}
               onChange={setOpenText}
-              onContinue={() => changePhase('whatsapp')}
-              onSkip={() => { setOpenText(''); changePhase('whatsapp') }}
+              onContinue={() => changePhase(hasRefIdentity ? 'whatsapp' : 'email')}
+              onSkip={() => { setOpenText(''); changePhase(hasRefIdentity ? 'whatsapp' : 'email') }}
+            />
+          )}
+
+          {phase === 'email' && (
+            <EmailStep
+              value={email}
+              onChange={setEmail}
+              error={error}
+              onContinue={() => {
+                if (!isEmailValid(email)) { setError('Email inválido'); return }
+                setError(null)
+                changePhase('whatsapp')
+              }}
             />
           )}
 
@@ -328,7 +389,8 @@ export default function ShortTestController() {
               onChange={setWhatsApp}
               error={error}
               submitting={submitting}
-              onSubmit={submit}
+              onSubmit={() => submit()}
+              onSkip={() => submit(null)}
             />
           )}
 
@@ -370,14 +432,57 @@ function FreeTextStep({
   )
 }
 
+function EmailStep({
+  value, onChange, error, onContinue,
+}: { value: string; onChange: (v: string) => void; error: string | null; onContinue: () => void }) {
+  const valid = isEmailValid(value)
+  return (
+    <div>
+      <h2 style={questionHeading}>¿A qué email te enviamos tus recomendaciones?</h2>
+      <p style={contextText}>
+        En las próximas horas recibirás un correo con el primer paso del protocolo que mejor encaja con
+        lo que has marcado.
+      </p>
+      <input
+        type="email"
+        inputMode="email"
+        autoComplete="email"
+        placeholder="tu@email.com"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        style={inputStyle}
+      />
+      {error && <div style={errorStyle}>{error}</div>}
+      <button
+        style={{ ...continueButton, opacity: !valid ? 0.5 : 1 }}
+        disabled={!valid}
+        onClick={onContinue}
+      >
+        Continuar →
+      </button>
+      <div style={{ height: '60px' }} />
+    </div>
+  )
+}
+
 function WhatsAppStep({
-  value, onChange, error, submitting, onSubmit,
-}: { value: string; onChange: (v: string) => void; error: string | null; submitting: boolean; onSubmit: () => void }) {
+  value, onChange, error, submitting, onSubmit, onSkip,
+}: {
+  value: string
+  onChange: (v: string) => void
+  error: string | null
+  submitting: boolean
+  onSubmit: () => void
+  onSkip: () => void
+}) {
   const valid = isWhatsAppValid(value)
   return (
     <div>
-      <h2 style={questionHeading}>¿A qué número de WhatsApp quieres que te enviemos el resultado?</h2>
-      <p style={contextText}>Vamos a contactarte por WhatsApp con el primer paso del protocolo. Incluye el prefijo de país.</p>
+      <h2 style={questionHeading}>¿Quieres unirte al grupo especializado en tus síntomas?</h2>
+      <p style={contextText}>
+        Recibirás información, herramientas para mejorar el estado de tu sistema nervioso e invitaciones a
+        formaciones del Dr. Carlos Alvear. Podrás eliminarlo como cualquier otro grupo de WhatsApp.
+      </p>
       <input
         type="tel"
         inputMode="tel"
@@ -387,13 +492,17 @@ function WhatsAppStep({
         onChange={(e) => onChange(e.target.value)}
         style={inputStyle}
       />
+      <p style={hintText}>Incluye el prefijo de país.</p>
       {error && <div style={errorStyle}>{error}</div>}
       <button
         style={{ ...continueButton, opacity: !valid || submitting ? 0.5 : 1 }}
         disabled={!valid || submitting}
         onClick={onSubmit}
       >
-        {submitting ? 'Enviando…' : 'Ver mi resultado'}
+        {submitting ? 'Enviando…' : 'Unirme al grupo'}
+      </button>
+      <button onClick={onSkip} disabled={submitting} style={skipButton}>
+        Por ahora no — ver mis recomendaciones
       </button>
       <div style={{ height: '60px' }} />
     </div>
@@ -412,7 +521,7 @@ function ResultStep({ result }: { result: BucketResult }) {
         textTransform: 'uppercase',
         marginBottom: 'var(--space-3)',
       }}>
-        Tu resultado
+        Tus recomendaciones
       </p>
       <h1 style={resultHeadline}>{copy.headline}</h1>
       <p style={resultBody}>{copy.body}</p>
@@ -514,6 +623,14 @@ const errorStyle: React.CSSProperties = {
   fontSize: 'var(--text-body-sm)',
   color: 'var(--color-error, #c0392b)',
   marginBottom: 'var(--space-3)',
+}
+
+const hintText: React.CSSProperties = {
+  fontFamily: 'var(--font-host-grotesk)',
+  fontSize: 'var(--text-body-sm)',
+  color: 'var(--color-text-tertiary, var(--color-text-secondary))',
+  marginTop: 'calc(var(--space-2) * -1)',
+  marginBottom: 'var(--space-4)',
 }
 
 const resultHeadline: React.CSSProperties = {

@@ -411,18 +411,18 @@ export function GatewayMindMap({ entries, onNavigate }: Props) {
       height: fullscreen ? '100vh' : 'auto',
       background: '#F8F9FB',
       borderRadius: fullscreen ? 0 : 14,
-      border: fullscreen ? 'none' : '1px solid rgba(38,66,51,0.08)',
+      border: fullscreen ? 'none' : '1px solid rgba(50, 66, 55,0.08)',
       overflow: 'hidden',
     }}>
       {/* TOOLBAR */}
       <div style={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        padding: '10px 16px', borderBottom: '1px solid rgba(38,66,51,0.06)',
+        padding: '10px 16px', borderBottom: '1px solid rgba(50, 66, 55,0.06)',
         background: 'white', flexShrink: 0,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#264233" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M12 2v4m0 12v4m-7.07-2.93l2.83-2.83m8.48-8.48l2.83-2.83M2 12h4m12 0h4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83" /></svg>
-          <span style={{ fontFamily: 'var(--font-host-grotesk)', fontSize: 13, fontWeight: 700, color: '#264233' }}>Mapa mental del Gateway</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#324237" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M12 2v4m0 12v4m-7.07-2.93l2.83-2.83m8.48-8.48l2.83-2.83M2 12h4m12 0h4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83" /></svg>
+          <span style={{ fontFamily: 'var(--font-host-grotesk)', fontSize: 13, fontWeight: 700, color: '#324237' }}>Mapa mental del Gateway</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <ToolBtn label="Expandir todo" onClick={expandAll} />
@@ -494,7 +494,7 @@ export function GatewayMindMap({ entries, onNavigate }: Props) {
       </div>
 
       {/* FOOTER */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 20, padding: '8px 16px', borderTop: '1px solid rgba(38,66,51,0.06)', background: 'white', flexShrink: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 20, padding: '8px 16px', borderTop: '1px solid rgba(50, 66, 55,0.06)', background: 'white', flexShrink: 0 }}>
         <StatusDot color={CLR.status.complete} label="Todo editado" />
         <StatusDot color={CLR.status.partial} label="Parcial" />
         <StatusDot color={CLR.status.untouched} label="Sin editar" />
@@ -514,7 +514,7 @@ function BadgePill({ x, y, text }: { x: number; y: number; text: string }) {
   const w = text.length * 6 + 14
   return (
     <g style={{ pointerEvents: 'none' }}>
-      <rect x={x - w - 6} y={y - 9} width={w} height={18} rx={9} fill="rgba(38,66,51,0.05)" stroke="rgba(38,66,51,0.08)" strokeWidth={0.5} />
+      <rect x={x - w - 6} y={y - 9} width={w} height={18} rx={9} fill="rgba(50, 66, 55,0.05)" stroke="rgba(50, 66, 55,0.08)" strokeWidth={0.5} />
       <text x={x - w / 2 - 6} y={y + 1} fill="#7B8D9A" fontSize={9} fontFamily="var(--font-host-grotesk)" textAnchor="middle" dominantBaseline="central">{text}</text>
     </g>
   )
@@ -526,8 +526,8 @@ function ToolBtn({ label, onClick, accent }: { label: string; onClick: () => voi
   return (
     <button onClick={onClick} style={{
       fontFamily: 'var(--font-host-grotesk)', fontSize: 11, fontWeight: 500,
-      color: accent ? '#CD796C' : '#5A6B78', background: accent ? 'rgba(205,121,108,0.08)' : 'rgba(38,66,51,0.04)',
-      border: '1px solid ' + (accent ? 'rgba(205,121,108,0.2)' : 'rgba(38,66,51,0.08)'),
+      color: accent ? '#CD796C' : '#5A6B78', background: accent ? 'rgba(205,121,108,0.08)' : 'rgba(50, 66, 55,0.04)',
+      border: '1px solid ' + (accent ? 'rgba(205,121,108,0.2)' : 'rgba(50, 66, 55,0.08)'),
       borderRadius: 6, padding: '4px 10px', cursor: 'pointer', transition: 'all 100ms ease',
     }}>{label}</button>
   )
@@ -537,13 +537,13 @@ function ZoomBtn({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
       width: 26, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center',
-      borderRadius: 6, border: '1px solid rgba(38,66,51,0.1)', background: 'white',
-      cursor: 'pointer', fontFamily: 'var(--font-host-grotesk)', fontSize: 14, fontWeight: 600, color: '#264233', lineHeight: 1,
+      borderRadius: 6, border: '1px solid rgba(50, 66, 55,0.1)', background: 'white',
+      cursor: 'pointer', fontFamily: 'var(--font-host-grotesk)', fontSize: 14, fontWeight: 600, color: '#324237', lineHeight: 1,
     }}>{label}</button>
   )
 }
 
-function Sep() { return <div style={{ width: 1, height: 20, background: 'rgba(38,66,51,0.08)' }} /> }
+function Sep() { return <div style={{ width: 1, height: 20, background: 'rgba(50, 66, 55,0.08)' }} /> }
 
 function StatusDot({ color, label }: { color: string; label: string }) {
   return (

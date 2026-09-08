@@ -26,11 +26,11 @@ function getFromEmail(): string {
   const isDev = process.env.NODE_ENV === 'development'
   return isDev
     ? 'onboarding@resend.dev'
-    : 'Javier · Instituto Epigenético <regulacion@institutoepigenetico.com>'
+    : 'Javier · Neurotropy <regulacion@neurotropy.com>'
 }
 
 function getBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_BASE_URL ?? 'https://lars.institutoepigenetico.com'
+  return process.env.NEXT_PUBLIC_BASE_URL ?? 'https://lars.neurotropy.com'
 }
 
 export async function POST(
@@ -144,16 +144,16 @@ export async function POST(
 <body style="margin: 0; padding: 0; background-color: #FFFFFF; font-family: 'Host Grotesk', system-ui, sans-serif; color: #212426;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 560px; margin: 0 auto; padding: 48px 24px;">
     <tr><td>
-      <img src="${getBaseUrl()}/Logo-definitivo-IE.png" alt="Instituto Epigenético" width="220" style="display: block; width: 220px; height: auto; margin: 0 0 32px 0;" />
+      <img src="${getBaseUrl()}/Logo-definitivo-IE.png" alt="Neurotropy" width="220" style="display: block; width: 220px; height: auto; margin: 0 0 32px 0;" />
       <p style="font-size: 14px; color: #212426; line-height: 1.8; margin: 0 0 32px 0; white-space: pre-line;">${body.content}</p>
       <table cellpadding="0" cellspacing="0" style="margin: 0 0 32px 0;">
-        <tr><td style="background: #264233; border-radius: 100px; padding: 16px 32px;">
+        <tr><td style="background: #324237; border-radius: 100px; padding: 16px 32px;">
           <a href="${mapUrl}" style="color: #FFFFFF; font-size: 15px; font-weight: 500; text-decoration: none; display: block; white-space: nowrap;">
             ${isVideo ? 'Ver mensaje de Javier' : 'Ver mi mapa'}
           </a>
         </td></tr>
       </table>
-      <div style="height: 1px; background: rgba(38, 66, 51, 0.10); margin-bottom: 24px;"></div>
+      <div style="height: 1px; background: rgba(50, 66, 55, 0.10); margin-bottom: 24px;"></div>
       <p style="font-size: 13px; color: #878E92; line-height: 1.6; margin: 0;">Confidencial. Solo tú puedes verlo.</p>
     </td></tr>
   </table>
@@ -165,13 +165,14 @@ export async function POST(
         video: 'Javier ha grabado algo para ti',
         early_unlock: 'Contenido nuevo desbloqueado en tu mapa',
         express_session: 'Javier quiere hablar contigo — 10 minutos',
-        manual_email: 'Un mensaje del Instituto Epigenético',
+        manual_email: 'Un mensaje de Neurotropy',
       }
 
       await getResend().emails.send({
         from: getFromEmail(),
+    replyTo: 'ayuda@neurotropy.com',
         to: row.email,
-        subject: subjectByType[body.type] ?? 'Un mensaje del Instituto Epigenético',
+        subject: subjectByType[body.type] ?? 'Un mensaje de Neurotropy',
         html,
       })
     } catch (emailErr) {

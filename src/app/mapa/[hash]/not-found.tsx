@@ -24,7 +24,7 @@ export default function MapaNotFound() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/Logo-definitivo-IE.png"
-          alt="Instituto Epigenético"
+          alt="Neurotropy"
           width={156}
           height={28}
           style={{ display: 'block', margin: '0 auto var(--space-10)' }}

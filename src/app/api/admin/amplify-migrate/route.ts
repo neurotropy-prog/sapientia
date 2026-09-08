@@ -103,7 +103,7 @@ export async function POST(): Promise<NextResponse> {
         .update({ meta: { ...currentMeta, amplify_comparisons_active: activeCount } })
         .eq('id', invite.inviter_id)
 
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://lars.institutoepigenetico.com'
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://lars.neurotropy.com'
 
       // Iniciales del invitado
       const inviteeEmail = invitee.email as string

@@ -57,7 +57,7 @@ function getSliderColor(value: number): string {
 function getSliderBackground(value: number): string {
   const color = getSliderColor(value)
   const pct = ((value - 1) / 9) * 100
-  return `linear-gradient(to right, ${color} ${pct}%, rgba(38,66,51,0.08) ${pct}%)`
+  return `linear-gradient(to right, ${color} ${pct}%, rgba(50, 66, 55,0.08) ${pct}%)`
 }
 
 export default function EvolutionReevaluation({

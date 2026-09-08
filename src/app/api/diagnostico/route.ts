@@ -375,7 +375,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             if (metaErr) console.error('[diagnostico] Error updating inviter meta:', metaErr)
           })
 
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://lars.institutoepigenetico.com'
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://lars.neurotropy.com'
 
         // Extraer iniciales del invitado (para el email al invitador)
         const inviteeLocalPart = email.trim().toLowerCase().split('@')[0] ?? ''

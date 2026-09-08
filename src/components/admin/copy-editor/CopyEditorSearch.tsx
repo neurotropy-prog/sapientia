@@ -34,7 +34,7 @@ export function CopyEditorSearch({ onSearch }: CopyEditorSearchProps) {
       position: 'relative',
       transition: 'box-shadow 200ms ease',
       borderRadius: 10,
-      boxShadow: isFocused ? '0 0 0 3px rgba(38, 66, 51, 0.08)' : 'none',
+      boxShadow: isFocused ? '0 0 0 3px rgba(50, 66, 55, 0.08)' : 'none',
     }}>
       {/* Search icon — SVG */}
       <svg
@@ -73,7 +73,7 @@ export function CopyEditorSearch({ onSearch }: CopyEditorSearchProps) {
           fontSize: 14,
           color: 'var(--color-text-primary)',
           background: 'var(--color-bg-primary)',
-          border: `1px solid ${isFocused ? 'rgba(38, 66, 51, 0.25)' : 'rgba(30, 19, 16, 0.10)'}`,
+          border: `1px solid ${isFocused ? 'rgba(50, 66, 55, 0.25)' : 'rgba(30, 19, 16, 0.10)'}`,
           borderRadius: 10,
           padding: '11px 16px',
           paddingLeft: 42,

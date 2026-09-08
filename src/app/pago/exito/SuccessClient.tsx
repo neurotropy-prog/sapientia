@@ -200,7 +200,7 @@ export default function SuccessClient({ hash, email, sessionId }: Props) {
                   color: 'var(--color-text-tertiary)',
                   marginBottom: 'var(--space-4)',
                 }}>
-                  Director del Instituto Epigenético
+                  Director de Neurotropy
                 </p>
                 <p style={{
                   fontFamily: 'var(--font-host-grotesk)',
@@ -395,7 +395,7 @@ export default function SuccessClient({ hash, email, sessionId }: Props) {
               color: 'var(--color-text-tertiary)',
               marginTop: 'var(--space-3)',
             }}>
-              ¿No llega? Revisa spam o escribe a soporte@institutoepigenetico.com
+              ¿No llega? Revisa spam o escribe a soporte@neurotropy.com
             </p>
           </div>
 

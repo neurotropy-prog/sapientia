@@ -11,7 +11,7 @@ import { cookies } from 'next/headers'
 import { verifyAdmin } from '@/lib/admin-auth'
 import { escapeHtml } from '@/lib/email-defaults'
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://lars.institutoepigenetico.com'
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://lars.neurotropy.com'
 const LOGO_URL = `${BASE_URL}/Logo-definitivo-IE.png`
 const SAMPLE_MAP_URL = `${BASE_URL}/mapa/sample123abc`
 
@@ -41,7 +41,7 @@ const SAMPLE_CONTENT: Record<ActionType, { subject: string; body: string; cta: s
     cta: 'Ver mi mapa',
   },
   manual_email: {
-    subject: 'Un mensaje del Instituto Epigenético',
+    subject: 'Un mensaje de Neurotropy',
     body: 'Este es un email personalizado escrito directamente por Javier.\n\nEl contenido lo define el director al momento de enviarlo — puede ser cualquier mensaje relevante para la situación específica del lead.',
     cta: 'Ver mi mapa',
   },
@@ -58,16 +58,16 @@ function buildActionPreview(type: ActionType): string {
 <body style="margin:0;padding:0;background-color:#FFFFFF;font-family:'Host Grotesk',system-ui,sans-serif;color:#212426;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;padding:48px 24px;">
     <tr><td>
-      <img src="${LOGO_URL}" alt="Instituto Epigenético" width="220" style="display:block;width:220px;height:auto;margin:0 0 32px 0;" />
+      <img src="${LOGO_URL}" alt="Neurotropy" width="220" style="display:block;width:220px;height:auto;margin:0 0 32px 0;" />
       <p style="font-size:14px;color:#212426;line-height:1.8;margin:0 0 32px 0;white-space:pre-line;">${escapeHtml(sample.body)}</p>
       <table cellpadding="0" cellspacing="0" style="margin:0 0 32px 0;">
-        <tr><td style="background:#264233;border-radius:100px;padding:16px 32px;">
+        <tr><td style="background:#324237;border-radius:100px;padding:16px 32px;">
           <a href="${mapUrl}" style="color:#FFFFFF;font-size:15px;font-weight:500;text-decoration:none;display:block;white-space:nowrap;">
             ${escapeHtml(isVideo ? 'Ver mensaje de Javier' : 'Ver mi mapa')}
           </a>
         </td></tr>
       </table>
-      <div style="height:1px;background:rgba(38, 66, 51, 0.10);margin-bottom:24px;"></div>
+      <div style="height:1px;background:rgba(50, 66, 55, 0.10);margin-bottom:24px;"></div>
       <p style="font-size:13px;color:#878E92;line-height:1.6;margin:0;">Confidencial. Solo tú puedes verlo.</p>
     </td></tr>
   </table>

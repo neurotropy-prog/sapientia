@@ -82,7 +82,7 @@ export default function BisagraScreen({ scores, onContinue }: BisagraScreenProps
       <div
         style={{
           background: 'var(--color-bg-secondary)',
-          border: '1px solid rgba(38,66,51,0.18)',
+          border: '1px solid rgba(50, 66, 55,0.18)',
           borderRadius: 'var(--radius-xl)',
           padding: 'var(--space-8) var(--space-6)',
         }}

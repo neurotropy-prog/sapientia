@@ -13,7 +13,7 @@ import { EMAIL_DEFAULTS, escapeHtml, textToHtmlParagraphs } from '@/lib/email-de
 import { VALID_EMAIL_KEYS } from '@/lib/email-defaults'
 import { createAdminClient } from '@/lib/supabase'
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://lars.institutoepigenetico.com'
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://lars.neurotropy.com'
 const LOGO_URL = `${BASE_URL}/Logo-definitivo-IE.png`
 const SAMPLE_MAP_URL = `${BASE_URL}/mapa/sample123abc`
 
@@ -26,16 +26,16 @@ function buildEvolutionPreview(bodyHtml: string, buttonText: string): string {
 <body style="margin:0;padding:0;background-color:#FFFFFF;font-family:'Host Grotesk',system-ui,sans-serif;color:#212426;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;padding:48px 24px;">
     <tr><td>
-      <img src="${LOGO_URL}" alt="Instituto Epigenético" width="220" style="display:block;width:220px;height:auto;margin:0 0 32px 0;" />
+      <img src="${LOGO_URL}" alt="Neurotropy" width="220" style="display:block;width:220px;height:auto;margin:0 0 32px 0;" />
       ${bodyHtml}
       <table cellpadding="0" cellspacing="0" style="margin:32px 0;">
-        <tr><td style="background:#264233;border-radius:100px;padding:16px 32px;">
+        <tr><td style="background:#324237;border-radius:100px;padding:16px 32px;">
           <a href="${SAMPLE_MAP_URL}" style="color:#FFFFFF;font-size:15px;font-weight:500;text-decoration:none;display:block;white-space:nowrap;">
             ${escapeHtml(buttonText)}
           </a>
         </td></tr>
       </table>
-      <div style="height:1px;background:rgba(38, 66, 51, 0.10);margin-bottom:24px;"></div>
+      <div style="height:1px;background:rgba(50, 66, 55, 0.10);margin-bottom:24px;"></div>
       <p style="font-size:13px;color:#878E92;line-height:1.6;margin:0;">
         Este mapa es tuyo. Confidencial. Solo tú puedes verlo.
       </p>
@@ -53,11 +53,11 @@ function buildD0Preview(subject: string, ctaText: string): string {
 <body style="margin:0;padding:0;background-color:#FFFFFF;font-family:'Host Grotesk',system-ui,sans-serif;color:#212426;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;padding:48px 24px;">
     <tr><td>
-      <img src="${LOGO_URL}" alt="Instituto Epigenético" width="220" style="display:block;width:220px;height:auto;margin:0 0 32px 0;" />
+      <img src="${LOGO_URL}" alt="Neurotropy" width="220" style="display:block;width:220px;height:auto;margin:0 0 32px 0;" />
       <p style="font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:#CD796C;margin:0 0 8px 0;">TU MAPA DE NEUROREGULACIÓN</p>
       <p style="font-size:48px;font-weight:600;color:#212426;margin:0 0 4px 0;line-height:1;">42<span style="font-size:24px;font-weight:400;color:#2D2D2D;">/100</span></p>
       <p style="font-size:14px;color:#878E92;margin:0 0 40px 0;">Score global de neuroregulación</p>
-      <div style="height:1px;background:rgba(38, 66, 51, 0.10);margin-bottom:32px;"></div>
+      <div style="height:1px;background:rgba(50, 66, 55, 0.10);margin-bottom:32px;"></div>
       <p style="font-size:13px;color:#878E92;margin:0 0 6px 0;">Tu dimensión más comprometida</p>
       <p style="font-size:20px;font-weight:500;color:#E87040;margin:0 0 6px 0;">Calidad de Sueño</p>
       <p style="font-size:32px;font-weight:600;color:#E87040;margin:0 0 32px 0;line-height:1;">28<span style="font-size:16px;font-weight:400;color:#2D2D2D;">/100</span></p>
@@ -65,11 +65,11 @@ function buildD0Preview(subject: string, ctaText: string): string {
         Empieza por el sueño. No como descanso — como restauración biológica real.
       </p>
       <table cellpadding="0" cellspacing="0" style="margin-bottom:40px;">
-        <tr><td style="background:#264233;border-radius:100px;padding:16px 32px;">
+        <tr><td style="background:#324237;border-radius:100px;padding:16px 32px;">
           <a href="${SAMPLE_MAP_URL}" style="color:#FFFFFF;font-size:15px;font-weight:500;text-decoration:none;display:block;white-space:nowrap;">${escapeHtml(ctaText)}</a>
         </td></tr>
       </table>
-      <div style="height:1px;background:rgba(38, 66, 51, 0.10);margin-bottom:32px;"></div>
+      <div style="height:1px;background:rgba(50, 66, 55, 0.10);margin-bottom:32px;"></div>
       <p style="font-size:13px;color:#878E92;line-height:1.6;margin:0;">
         Este mapa es tuyo. Evoluciona con el tiempo — cada semana hay algo nuevo.<br>
         Confidencial. Solo tú puedes verlo.
@@ -90,7 +90,7 @@ function buildGoodbyePreview(bodyText: string, ctaText: string): string {
 <body style="margin:0;padding:0;background-color:#FFFFFF;font-family:'Host Grotesk',system-ui,sans-serif;color:#212426;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;padding:48px 24px;">
     <tr><td>
-      <img src="${LOGO_URL}" alt="Instituto Epigenético" width="220" style="display:block;width:220px;height:auto;margin:0 0 32px 0;" />
+      <img src="${LOGO_URL}" alt="Neurotropy" width="220" style="display:block;width:220px;height:auto;margin:0 0 32px 0;" />
       ${bodyHtml}
       <p style="font-size:16px;font-weight:500;color:#212426;line-height:1.6;margin:0 0 32px 0;padding:20px 24px;background:#EAF2EE;border-left:3px solid #CD796C;border-radius:8px;">
         Tu mapa es tuyo. Sigue aquí. Sigue vivo.
@@ -99,14 +99,14 @@ function buildGoodbyePreview(bodyText: string, ctaText: string): string {
         Si en algún momento quieres que volvamos a avisarte cuando haya algo nuevo:
       </p>
       <table cellpadding="0" cellspacing="0" style="margin:0 0 16px 0;">
-        <tr><td style="background:#264233;border-radius:100px;padding:16px 32px;">
+        <tr><td style="background:#324237;border-radius:100px;padding:16px 32px;">
           <a href="#" style="color:#FFFFFF;font-size:15px;font-weight:500;text-decoration:none;display:block;white-space:nowrap;">${escapeHtml(ctaText)}</a>
         </td></tr>
       </table>
       <p style="font-size:13px;color:#878E92;line-height:1.6;margin:0 0 32px 0;">Sin compromiso. Un clic.</p>
-      <div style="height:1px;background:rgba(38, 66, 51, 0.10);margin-bottom:32px;"></div>
+      <div style="height:1px;background:rgba(50, 66, 55, 0.10);margin-bottom:32px;"></div>
       <p style="font-size:14px;color:#212426;line-height:1.6;margin:0 0 4px 0;">Javier A. Martín Ramos</p>
-      <p style="font-size:13px;color:#878E92;margin:0 0 24px 0;">Director · Instituto Epigenético</p>
+      <p style="font-size:13px;color:#878E92;margin:0 0 24px 0;">Director · Neurotropy</p>
     </td></tr>
   </table>
 </body>
@@ -120,32 +120,32 @@ function buildPostPagoPreview(bodyText: string, subject: string, ctaText: string
 <body style="margin:0;padding:0;background-color:#FFFFFF;font-family:'Host Grotesk',system-ui,sans-serif;color:#212426;">
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;padding:48px 24px;">
     <tr><td>
-      <img src="${LOGO_URL}" alt="Instituto Epigenético" width="220" style="display:block;width:220px;height:auto;margin:0 0 32px 0;" />
+      <img src="${LOGO_URL}" alt="Neurotropy" width="220" style="display:block;width:220px;height:auto;margin:0 0 32px 0;" />
       <p style="font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:#CD796C;margin:0 0 8px 0;">SEMANA 1</p>
       <p style="font-size:28px;font-weight:600;color:#212426;margin:0 0 8px 0;line-height:1.2;">Tu Semana 1 ha comenzado.</p>
       <p style="font-size:14px;color:#2D2D2D;line-height:1.6;margin:0 0 40px 0;">${escapeHtml(bodyText)}</p>
-      <div style="height:1px;background:rgba(38, 66, 51, 0.10);margin-bottom:32px;"></div>
+      <div style="height:1px;background:rgba(50, 66, 55, 0.10);margin-bottom:32px;"></div>
       <p style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#878E92;margin:0 0 8px 0;">TU PROTOCOLO DE SUEÑO DE EMERGENCIA</p>
       <table cellpadding="0" cellspacing="0" style="margin:0 0 8px 0;">
-        <tr><td style="background:#264233;border-radius:100px;padding:14px 28px;">
+        <tr><td style="background:#324237;border-radius:100px;padding:14px 28px;">
           <a href="#" style="color:#FFFFFF;font-size:14px;font-weight:500;text-decoration:none;display:block;white-space:nowrap;">Descargar el Protocolo</a>
         </td></tr>
       </table>
       <p style="font-size:13px;color:#878E92;line-height:1.6;margin:0 0 40px 0;">Diseñado por el Dr. Carlos Alvear López.<br>Empieza esta noche. Resultados en 72 horas.</p>
-      <div style="height:1px;background:rgba(38, 66, 51, 0.10);margin-bottom:32px;"></div>
+      <div style="height:1px;background:rgba(50, 66, 55, 0.10);margin-bottom:32px;"></div>
       <p style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#878E92;margin:0 0 8px 0;">TU SESIÓN CON JAVIER</p>
       <table cellpadding="0" cellspacing="0" style="margin:0 0 8px 0;">
-        <tr><td style="background:#264233;border-radius:100px;padding:14px 28px;">
+        <tr><td style="background:#324237;border-radius:100px;padding:14px 28px;">
           <a href="#" style="color:#FFFFFF;font-size:14px;font-weight:500;text-decoration:none;display:block;white-space:nowrap;">${escapeHtml(ctaText)}</a>
         </td></tr>
       </table>
       <p style="font-size:13px;color:#878E92;line-height:1.6;margin:0 0 40px 0;">Ya tiene tu mapa de neuroregulación. No empezáis de cero.<br>20-30 minutos. Esta semana.</p>
-      <div style="height:1px;background:rgba(38, 66, 51, 0.10);margin-bottom:32px;"></div>
+      <div style="height:1px;background:rgba(50, 66, 55, 0.10);margin-bottom:32px;"></div>
       <p style="font-size:14px;color:#2D2D2D;line-height:1.6;margin:0 0 8px 0;">Recuerda: si tu sueño no mejora en 7 días, te devolvemos los 97€. Sin preguntas.</p>
       <p style="font-size:14px;color:#212426;font-weight:500;margin:0 0 40px 0;">Pero no los vas a necesitar.</p>
-      <div style="height:1px;background:rgba(38, 66, 51, 0.10);margin-bottom:32px;"></div>
+      <div style="height:1px;background:rgba(50, 66, 55, 0.10);margin-bottom:32px;"></div>
       <p style="font-size:14px;color:#212426;margin:0 0 4px 0;">Javier A. Martín Ramos</p>
-      <p style="font-size:13px;color:#878E92;margin:0;">Director · Instituto Epigenético</p>
+      <p style="font-size:13px;color:#878E92;margin:0;">Director · Neurotropy</p>
       <p style="font-size:11px;color:#878E92;margin:16px 0 0 0;"><a href="#" style="color:#878E92;text-decoration:underline;">Darme de baja</a></p>
     </td></tr>
   </table>

@@ -228,7 +228,7 @@ export default function DefenseReveal({ archetype, onContinue }: DefenseRevealPr
       {/* ── Caja gris: Herida + Armadura + SN ── */}
       <div
         style={{
-          background: 'rgba(38, 66, 51, 0.05)',
+          background: 'rgba(50, 66, 55, 0.05)',
           borderRadius: 'var(--radius-md)',
           padding: 'var(--space-5)',
           marginBottom: 'var(--space-5)',

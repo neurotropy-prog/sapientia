@@ -19,7 +19,7 @@ function getResend(): Resend {
 }
 
 function getBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_BASE_URL ?? 'https://lars.institutoepigenetico.com'
+  return process.env.NEXT_PUBLIC_BASE_URL ?? 'https://lars.neurotropy.com'
 }
 
 const JAVIER_EMAIL = 'javier@neurotropy.com'
@@ -134,7 +134,7 @@ export async function POST(
         ${leadEmail} ha subido un vídeo
       </p>
 
-      <div style="border:1px solid rgba(38,66,51,0.12);border-left:3px solid #CD796C;border-radius:8px;padding:20px;margin:0 0 24px 0;background:#F6F9F7;">
+      <div style="border:1px solid rgba(50, 66, 55,0.12);border-left:3px solid #CD796C;border-radius:8px;padding:20px;margin:0 0 24px 0;background:#F6F9F7;">
         <p style="font-size:12px;color:#878E92;margin:0 0 8px 0;text-transform:uppercase;letter-spacing:0.05em;">
           Vídeo
         </p>
@@ -147,14 +147,14 @@ export async function POST(
 
       <table cellpadding="0" cellspacing="0" style="margin:0 0 16px 0;">
         <tr>
-          <td style="background:#264233;border-radius:100px;padding:14px 28px;">
+          <td style="background:#324237;border-radius:100px;padding:14px 28px;">
             <a href="${adminUrl}" style="color:#FFFFFF;font-size:14px;font-weight:500;text-decoration:none;white-space:nowrap;">
               Abrir Hub
             </a>
           </td>
           <td style="width:12px;"></td>
-          <td style="background:transparent;border:1px solid rgba(38,66,51,0.2);border-radius:100px;padding:14px 28px;">
-            <a href="${mapUrl}" style="color:#264233;font-size:14px;font-weight:500;text-decoration:none;white-space:nowrap;">
+          <td style="background:transparent;border:1px solid rgba(50, 66, 55,0.2);border-radius:100px;padding:14px 28px;">
+            <a href="${mapUrl}" style="color:#324237;font-size:14px;font-weight:500;text-decoration:none;white-space:nowrap;">
               Ver mapa
             </a>
           </td>
@@ -169,7 +169,7 @@ export async function POST(
     await getResend().emails.send({
       from: isDev
         ? 'onboarding@resend.dev'
-        : 'LARS Notificaciones <regulacion@institutoepigenetico.com>',
+        : 'LARS Notificaciones <regulacion@neurotropy.com>',
       to: JAVIER_EMAIL,
       subject: `🎥 Vídeo de ${leadEmail}`,
       html,

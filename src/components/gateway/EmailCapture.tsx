@@ -118,7 +118,7 @@ export default function EmailCapture({ scores, onComplete }: EmailCaptureProps) 
           position: 'relative',
           borderRadius: 'var(--radius-xl)',
           overflow: 'hidden',
-          border: '1px solid rgba(38,66,51,0.18)',
+          border: '1px solid rgba(50, 66, 55,0.18)',
           padding: 'var(--space-5) var(--space-6)',
           background: 'rgba(249,241,222,0.95)',
         }}
@@ -171,7 +171,7 @@ export default function EmailCapture({ scores, onComplete }: EmailCaptureProps) 
                   style={{
                     height: '6px',
                     borderRadius: '3px',
-                    background: 'rgba(38,66,51,0.08)',
+                    background: 'rgba(50, 66, 55,0.08)',
                     overflow: 'hidden',
                   }}
                 >
@@ -256,8 +256,8 @@ export default function EmailCapture({ scores, onComplete }: EmailCaptureProps) 
               width: '100%',
               padding: '14px 16px',
               borderRadius: 'var(--radius-pill)',
-              border: '1px solid rgba(38,66,51,0.12)',
-              background: 'rgba(38,66,51,0.05)',
+              border: '1px solid rgba(50, 66, 55,0.12)',
+              background: 'rgba(50, 66, 55,0.05)',
               color: 'var(--color-text-primary)',
               fontFamily: 'var(--font-host-grotesk)',
               fontSize: '16px',
@@ -272,7 +272,7 @@ export default function EmailCapture({ scores, onComplete }: EmailCaptureProps) 
             }}
             onBlurCapture={(e) => {
               e.currentTarget.style.boxShadow = 'none'
-              e.currentTarget.style.borderColor = 'rgba(38,66,51,0.12)'
+              e.currentTarget.style.borderColor = 'rgba(50, 66, 55,0.12)'
             }}
           />
 
@@ -294,8 +294,8 @@ export default function EmailCapture({ scores, onComplete }: EmailCaptureProps) 
               borderRadius: 'var(--radius-pill)',
               border: showError
                 ? '1px solid var(--color-error)'
-                : '1px solid rgba(38,66,51,0.12)',
-              background: 'rgba(38,66,51,0.05)',
+                : '1px solid rgba(50, 66, 55,0.12)',
+              background: 'rgba(50, 66, 55,0.05)',
               color: 'var(--color-text-primary)',
               fontFamily: 'var(--font-host-grotesk)',
               fontSize: '16px', /* 16px: evita zoom en iOS */
@@ -313,7 +313,7 @@ export default function EmailCapture({ scores, onComplete }: EmailCaptureProps) 
             onBlurCapture={(e) => {
               e.currentTarget.style.boxShadow = 'none'
               if (!showError) {
-                e.currentTarget.style.borderColor = 'rgba(38,66,51,0.12)'
+                e.currentTarget.style.borderColor = 'rgba(50, 66, 55,0.12)'
               }
             }}
           />

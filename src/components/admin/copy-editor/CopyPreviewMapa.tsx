@@ -182,7 +182,7 @@ const ctaStyle: React.CSSProperties = {
   fontSize: 10,
   fontWeight: 600,
   color: '#FFFFFF',
-  background: '#264233',
+  background: '#324237',
   borderRadius: 9999,
   padding: '4px 12px',
 }

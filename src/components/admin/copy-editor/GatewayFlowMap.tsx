@@ -43,7 +43,7 @@ const ZONE_LABELS: Record<number, string> = {
 }
 
 const ZONE_COLORS: Record<number, { bg: string; border: string; text: string }> = {
-  1: { bg: 'rgba(38,66,51,0.06)', border: 'rgba(38,66,51,0.12)', text: '#264233' },
+  1: { bg: 'rgba(50, 66, 55,0.06)', border: 'rgba(50, 66, 55,0.12)', text: '#324237' },
   2: { bg: 'rgba(205,121,108,0.06)', border: 'rgba(205,121,108,0.12)', text: '#CD796C' },
   3: { bg: 'rgba(205,121,108,0.06)', border: 'rgba(205,121,108,0.12)', text: '#CD796C' },
 }
@@ -117,7 +117,7 @@ export function GatewayFlowMap({ entries, onNavigate }: GatewayFlowMapProps) {
       {/* Header */}
       <div style={headerStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#264233" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#324237" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
           </svg>
           <span style={headerTitleStyle}>Mapa del Gateway</span>
@@ -189,13 +189,13 @@ export function GatewayFlowMap({ entries, onNavigate }: GatewayFlowMapProps) {
                           background: isHovered ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.7)',
                           border: isSpecial
                             ? `1.5px solid ${isHovered ? zc.text : zc.border}`
-                            : `1px solid ${isHovered ? 'rgba(38,66,51,0.2)' : 'rgba(38,66,51,0.08)'}`,
+                            : `1px solid ${isHovered ? 'rgba(50, 66, 55,0.2)' : 'rgba(50, 66, 55,0.08)'}`,
                           borderRadius: isSpecial ? 8 : 6,
                           cursor: 'pointer',
                           fontFamily: 'var(--font-host-grotesk)',
                           fontSize: 11,
                           fontWeight: isHovered ? 600 : 500,
-                          color: isHovered ? '#264233' : 'var(--color-text-secondary)',
+                          color: isHovered ? '#324237' : 'var(--color-text-secondary)',
                           transition: 'all 120ms ease-out',
                           transform: isHovered ? 'translateY(-1px)' : 'none',
                           boxShadow: isHovered ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
@@ -268,7 +268,7 @@ export function GatewayFlowMap({ entries, onNavigate }: GatewayFlowMapProps) {
 
 const containerStyle: CSSProperties = {
   background: 'rgba(255,255,255,0.6)',
-  border: '1px solid rgba(38,66,51,0.08)',
+  border: '1px solid rgba(50, 66, 55,0.08)',
   borderRadius: 14,
   padding: '16px 20px 12px',
   marginBottom: 20,
@@ -285,7 +285,7 @@ const headerTitleStyle: CSSProperties = {
   fontFamily: 'var(--font-host-grotesk)',
   fontSize: 13,
   fontWeight: 700,
-  color: '#264233',
+  color: '#324237',
 }
 
 const headerStatsStyle: CSSProperties = {
@@ -298,7 +298,7 @@ const progressBarBgStyle: CSSProperties = {
   width: 80,
   height: 4,
   borderRadius: 2,
-  background: 'rgba(38,66,51,0.08)',
+  background: 'rgba(50, 66, 55,0.08)',
   overflow: 'hidden',
 }
 
@@ -327,5 +327,5 @@ const legendStyle: CSSProperties = {
   gap: 16,
   marginTop: 12,
   paddingTop: 10,
-  borderTop: '1px solid rgba(38,66,51,0.06)',
+  borderTop: '1px solid rgba(50, 66, 55,0.06)',
 }

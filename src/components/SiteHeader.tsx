@@ -51,7 +51,7 @@ export default function SiteHeader({ variant = 'default' }: SiteHeaderProps) {
       data-variant={variant}
     >
       <div className="site-header__container">
-        <a href="/" className="site-header__logo-link" aria-label="Instituto Epigenético — Ir al inicio">
+        <a href="/" className="site-header__logo-link" aria-label="Neurotropy — Ir al inicio">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/Logo-definitivo-IE.png"

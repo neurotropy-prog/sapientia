@@ -102,7 +102,7 @@ function CopyEditorFieldInner({
 
   // Dynamic focus border
   const borderColor = isFocused
-    ? 'rgba(38, 66, 51, 0.35)'
+    ? 'rgba(50, 66, 55, 0.35)'
     : isCustomized
       ? 'rgba(180, 90, 50, 0.15)'
       : 'rgba(30, 19, 16, 0.06)'
@@ -253,7 +253,7 @@ function CopyEditorFieldInner({
                 fontSize: 12,
                 fontWeight: 600,
                 color: '#FFFFFF',
-                background: status === 'saving' ? 'rgba(38, 66, 51, 0.5)' : '#264233',
+                background: status === 'saving' ? 'rgba(50, 66, 55, 0.5)' : '#324237',
                 border: 'none',
                 borderRadius: 9999,
                 padding: '5px 16px',

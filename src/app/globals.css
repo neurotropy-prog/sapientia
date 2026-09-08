@@ -16,8 +16,8 @@
   --color-bg-warm: #FBF8F3;
   --color-bg-warm-alt: #F7F5F0;
   --color-bg-green-soft: #EBF5EA;
-  --color-surface-subtle: rgba(38, 66, 51, 0.10);
-  --color-bg-dark: #264233;
+  --color-surface-subtle: rgba(50, 66, 55, 0.10);
+  --color-bg-dark: #324237;
   --color-bg-dark-deep: #1B4332;
 
   /* ---- COLORES DE TEXTO ---- */
@@ -41,14 +41,14 @@
   --color-accent-warm-muted: #CC796C;
 
   /* ---- COLOR PRIMARIO (Verde Bosque) — CTA Principal ---- */
-  --color-cta: #264233;
+  --color-cta: #324237;
   --color-cta-hover: #1E352A;
   --color-cta-text: #FFFFFF;
-  --color-primary: #264233;
+  --color-primary: #324237;
   --color-primary-deep: #1B4332;
   --color-primary-hover: #1E352A;
   --color-primary-light: #3A5A47;
-  --color-primary-subtle: rgba(38, 66, 51, 0.10);
+  --color-primary-subtle: rgba(50, 66, 55, 0.10);
 
   /* ---- COLOR SECUNDARIO (Salmón para botón secundario) ---- */
   --color-secondary: #CD796C;
@@ -142,9 +142,9 @@
   --transition-expressive: 600ms cubic-bezier(0.16, 1, 0.3, 1);
 
   /* ---- BORDES ---- */
-  --border-subtle: 1px solid rgba(38, 66, 51, 0.18);
-  --border-medium: 1px solid rgba(38, 66, 51, 0.10);
-  --border-interactive: 1px solid rgba(38, 66, 51, 0.12);
+  --border-subtle: 1px solid rgba(50, 66, 55, 0.18);
+  --border-medium: 1px solid rgba(50, 66, 55, 0.10);
+  --border-interactive: 1px solid rgba(50, 66, 55, 0.12);
   --border-accent: 1px solid rgba(205, 121, 108, 0.12);
   --border-accent-strong: 1px solid rgba(205, 121, 108, 0.15);
 }
@@ -806,7 +806,7 @@ input[type="range"]::-moz-range-track {
 /* Landing opaque state (scroll or gateway active) */
 .site-header[data-variant="landing"].site-header--opaque {
   background: var(--color-bg-primary);
-  border-bottom-color: rgba(38, 66, 51, 0.08);
+  border-bottom-color: rgba(50, 66, 55, 0.08);
 }
 
 .site-header__container {

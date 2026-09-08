@@ -86,7 +86,7 @@ export async function createCalendarEvent({
   const event = await calendar.events.insert({
     calendarId,
     conferenceDataVersion: 1,
-    sendUpdates: 'all',
+    sendUpdates: 'none', // no se envía invitación Google; el usuario recibe confirmación propia por Resend
     requestBody: {
       summary,
       description,

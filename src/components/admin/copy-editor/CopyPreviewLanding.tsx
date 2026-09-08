@@ -117,7 +117,7 @@ export function CopyPreviewLanding({ localValues, activeSubsection }: CopyPrevie
         <div style={{
           marginTop: 10,
           padding: '8px 16px',
-          background: '#264233',
+          background: '#324237',
           color: '#FFFFFF',
           borderRadius: 9999,
           fontFamily: 'var(--font-host-grotesk)',

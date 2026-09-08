@@ -146,7 +146,7 @@ export default function P1RoleCards({ onSelect, animateEntrance = false }: P1Rol
                 background: isSelected ? 'var(--color-bg-secondary)' : 'var(--color-bg-primary)',
                 border: isSelected
                   ? '2px solid var(--color-primary)'
-                  : '1.5px solid rgba(38,66,51,0.10)',
+                  : '1.5px solid rgba(50, 66, 55,0.10)',
                 borderRadius: 'var(--radius-lg)',
                 padding: 0,
                 cursor: selected && !isSelected ? 'default' : 'pointer',

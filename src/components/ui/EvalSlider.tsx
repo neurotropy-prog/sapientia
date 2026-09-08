@@ -136,7 +136,7 @@ export default function EvalSlider({
             right: 0,
             height: '4px',
             borderRadius: '2px',
-            background: 'rgba(38, 66, 51, 0.08)',
+            background: 'rgba(50, 66, 55, 0.08)',
           }}
         />
 
@@ -164,7 +164,7 @@ export default function EvalSlider({
                 left: `${tickPct}%`,
                 width: '1px',
                 height: '8px',
-                background: 'rgba(38, 66, 51, 0.12)',
+                background: 'rgba(50, 66, 55, 0.12)',
                 transform: 'translateX(-0.5px)',
                 top: 'calc(50% - 4px)',
               }}

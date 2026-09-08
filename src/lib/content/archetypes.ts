@@ -6,7 +6,7 @@
  * - /arquetipos/tres_capas_necesidad.pdf (3 capas de necesidad)
  * - /arquetipos/arquetipos-conexiones.jpeg (matriz de intensidades)
  *
- * © Neurotropy · Instituto Epigenético
+ * © Neurotropy
  */
 
 // ─── TIPOS ────────────────────────────────────────────────────────────────────

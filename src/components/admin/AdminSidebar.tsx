@@ -29,7 +29,7 @@ import {
 
 // ── Design tokens ──
 
-const SIDEBAR_BG = '#264233'
+const SIDEBAR_BG = '#324237'
 const SIDEBAR_TEXT = '#EAF2EE'
 const SIDEBAR_TEXT_MUTED = 'rgba(249, 241, 222, 0.5)'
 const ACTIVE_BG = 'rgba(180, 90, 50, 0.15)'
@@ -169,7 +169,7 @@ export default function AdminSidebar({
         >
           <Image
             src="/isotipo-ie-white.svg"
-            alt="Instituto Epigenético"
+            alt="Neurotropy"
             width={24}
             height={16}
             style={{ display: 'block' }}

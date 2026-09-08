@@ -99,7 +99,7 @@ export default function ComparisonDimensionBar({
               flex: 1,
               height: '8px',
               borderRadius: '4px',
-              background: 'rgba(38,66,51,0.08)',
+              background: 'rgba(50, 66, 55,0.08)',
               overflow: 'hidden',
             }}
           >
@@ -153,7 +153,7 @@ export default function ComparisonDimensionBar({
               flex: 1,
               height: '8px',
               borderRadius: '4px',
-              background: 'rgba(38,66,51,0.08)',
+              background: 'rgba(50, 66, 55,0.08)',
               overflow: 'hidden',
             }}
           >

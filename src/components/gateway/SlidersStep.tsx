@@ -246,8 +246,8 @@ export default function SlidersStep({ question, sliders, onContinue, defaultValu
                     background: `linear-gradient(to right,
                       ${color} 0%,
                       ${color} ${percent}%,
-                      rgba(38,66,51,0.1) ${percent}%,
-                      rgba(38,66,51,0.1) 100%)`,
+                      rgba(50, 66, 55,0.1) ${percent}%,
+                      rgba(50, 66, 55,0.1) 100%)`,
                     transition: 'background 200ms ease',
                     pointerEvents: 'none',
                   }}
@@ -308,7 +308,7 @@ export default function SlidersStep({ question, sliders, onContinue, defaultValu
                         style={{
                           width: '1px',
                           height: isCenter ? '10px' : '6px',
-                          background: 'rgba(38,66,51,0.18)',
+                          background: 'rgba(50, 66, 55,0.18)',
                           borderRadius: '0.5px',
                         }}
                       />

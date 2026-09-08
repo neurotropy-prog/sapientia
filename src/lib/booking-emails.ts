@@ -17,7 +17,7 @@ function getResend(): Resend {
   return _resend
 }
 
-const FROM_EMAIL = 'Javier · Instituto Epigenético <regulacion@institutoepigenetico.com>'
+const FROM_EMAIL = 'Javier · Neurotropy <regulacion@neurotropy.com>'
 const FROM_EMAIL_DEV = 'onboarding@resend.dev'
 
 function getFromEmail(): string {
@@ -25,7 +25,7 @@ function getFromEmail(): string {
 }
 
 function getBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_BASE_URL ?? 'https://lars.institutoepigenetico.com'
+  return process.env.NEXT_PUBLIC_BASE_URL ?? 'https://lars.neurotropy.com'
 }
 
 const JAVIER_EMAIL = 'javier@institutoepigenetico.com'
@@ -39,7 +39,7 @@ function buildBookingEmail(params: {
 }): string {
   const button = params.buttonText && params.buttonUrl ? `
     <table cellpadding="0" cellspacing="0" style="margin: 32px auto;">
-      <tr><td style="background: #264233; border-radius: 100px; padding: 16px 40px;">
+      <tr><td style="background: #324237; border-radius: 100px; padding: 16px 40px;">
         <a href="${params.buttonUrl}" style="color: #FFFFFF; font-family: 'Host Grotesk', system-ui, sans-serif; font-size: 15px; font-weight: 600; text-decoration: none; display: block; white-space: nowrap; text-align: center;">
           ${params.buttonText}
         </a>
@@ -63,16 +63,16 @@ function buildBookingEmail(params: {
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 560px; margin: 0 auto; padding: 48px 24px;">
     <tr><td>
       <!-- Header: logo -->
-      <img src="${getBaseUrl()}/Logo-definitivo-IE.png" alt="Instituto Epigenético" width="220" style="display: block; width: 220px; height: auto; margin: 0 0 32px 0;" />
+      <img src="${getBaseUrl()}/Logo-definitivo-IE.png" alt="Neurotropy" width="220" style="display: block; width: 220px; height: auto; margin: 0 0 32px 0;" />
 
       ${params.content}
       ${button}
 
       <!-- Footer -->
-      <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid rgba(38, 66, 51, 0.10);">
+      <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid rgba(50, 66, 55, 0.10);">
         <p style="font-family: 'Host Grotesk', system-ui, sans-serif; font-size: 12px; color: #878E92; margin: 0; line-height: 1.6;">
-          Instituto Epigenético<br/>
-          regulacion@institutoepigenetico.com
+          Neurotropy<br/>
+          regulacion@neurotropy.com
         </p>
       </div>
     </td></tr>
@@ -128,7 +128,7 @@ export async function sendBookingConfirmationEmail({
       ENLACE DE VIDEOLLAMADA
     </p>
     <table cellpadding="0" cellspacing="0" width="100%" style="margin: 0 0 8px 0;">
-      <tr><td style="background: #EAF2EE; border: 1px solid rgba(38, 66, 51, 0.10); border-radius: 12px; padding: 14px 18px;">
+      <tr><td style="background: #EAF2EE; border: 1px solid rgba(50, 66, 55, 0.10); border-radius: 12px; padding: 14px 18px;">
         <a href="${meetUrl}" style="font-family: 'Host Grotesk', system-ui, sans-serif; color: #CD796C; font-size: 14px; text-decoration: none; word-break: break-all;">
           ${meetUrl}
         </a>
@@ -144,7 +144,7 @@ export async function sendBookingConfirmationEmail({
         esta confirmada.
       </p>
 
-      <div style="background: #EAF2EE; border: 1px solid rgba(38, 66, 51, 0.10); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+      <div style="background: #EAF2EE; border: 1px solid rgba(50, 66, 55, 0.10); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
         <p style="font-family: 'Host Grotesk', system-ui, sans-serif; font-size: 13px; color: #878E92; margin: 0 0 4px 0;">Fecha</p>
         <p style="font-family: 'Host Grotesk', system-ui, sans-serif; font-size: 18px; color: #212426; font-weight: 600; margin: 0 0 20px 0;">${date}</p>
 
@@ -171,6 +171,7 @@ export async function sendBookingConfirmationEmail({
 
   await getResend().emails.send({
     from: getFromEmail(),
+    replyTo: 'ayuda@neurotropy.com',
     to,
     subject: 'Tu sesión con Javier está confirmada',
     html,
@@ -207,7 +208,7 @@ export async function sendBookingReminderEmail({
         Mañana: tu sesión con Javier
       </p>
 
-      <div style="background: #EAF2EE; border: 1px solid rgba(38, 66, 51, 0.10); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+      <div style="background: #EAF2EE; border: 1px solid rgba(50, 66, 55, 0.10); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
         <p style="font-family: 'Host Grotesk', system-ui, sans-serif; font-size: 18px; color: #212426; font-weight: 600; margin: 0;">
           ${date} a las ${time}
         </p>
@@ -224,6 +225,7 @@ export async function sendBookingReminderEmail({
 
   await getResend().emails.send({
     from: getFromEmail(),
+    replyTo: 'ayuda@neurotropy.com',
     to,
     subject: `Mañana: tu sesión con Javier — ${time}`,
     html,
@@ -252,7 +254,7 @@ export async function sendBookingNotificationToJavier({
         Nueva sesión agendada
       </p>
 
-      <div style="background: #EAF2EE; border: 1px solid rgba(38, 66, 51, 0.10); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+      <div style="background: #EAF2EE; border: 1px solid rgba(50, 66, 55, 0.10); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
         <p style="font-family: 'Host Grotesk', system-ui, sans-serif; font-size: 13px; color: #878E92; margin: 0 0 4px 0;">Persona</p>
         <p style="font-family: 'Host Grotesk', system-ui, sans-serif; font-size: 16px; color: #212426; font-weight: 600; margin: 0 0 20px 0;">${userEmail}</p>
 
@@ -269,6 +271,7 @@ export async function sendBookingNotificationToJavier({
 
   await getResend().emails.send({
     from: getFromEmail(),
+    replyTo: 'ayuda@neurotropy.com',
     to: JAVIER_EMAIL,
     subject: `Nueva sesión: ${userEmail} — ${date} ${time}`,
     html,

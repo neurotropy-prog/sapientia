@@ -182,7 +182,7 @@ export default function DimensionCard({
           style={{
             height: '6px',
             borderRadius: '3px',
-            background: 'rgba(38,66,51,0.08)',
+            background: 'rgba(50, 66, 55,0.08)',
             overflow: 'hidden',
           }}
         >
@@ -277,7 +277,7 @@ export default function DimensionCard({
                     style={{
                       height: '3px',
                       borderRadius: '2px',
-                      background: 'rgba(38,66,51,0.06)',
+                      background: 'rgba(50, 66, 55,0.06)',
                       overflow: 'hidden',
                     }}
                   >

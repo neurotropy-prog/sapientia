@@ -11,9 +11,9 @@ const hostGrotesk = Host_Grotesk({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_BASE_URL ?? "https://lars.institutoepigenetico.com"
+    process.env.NEXT_PUBLIC_BASE_URL ?? "https://lars.neurotropy.com"
   ),
-  title: "Descubre el estado de tu sistema nervioso | Instituto Epigenético",
+  title: "Descubre el estado de tu sistema nervioso | Neurotropy",
   description:
     "Una evaluación de 3 minutos calibrada con más de 25.000 evaluaciones reales. Tu resultado es personal, confidencial y tuyo.",
   icons: {

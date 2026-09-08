@@ -2,16 +2,16 @@
 
 /**
  * Footer — Minimalista: copyright izquierda + links legales derecha en línea horizontal.
- * Background: --color-bg-dark (#264233).
+ * Background: --color-bg-dark (#324237).
  * Mobile: stack vertical centrado. Copyright arriba, links debajo.
  */
 
 
 const legalLinks = [
-  { label: 'Aviso legal', href: 'https://institutoepigenetico.com/aviso-legal' },
-  { label: 'Términos y condiciones', href: 'https://institutoepigenetico.com/terminos-y-condiciones' },
-  { label: 'Política de privacidad y cookies', href: 'https://institutoepigenetico.com/politica-de-privacidad' },
-  { label: 'Contacto', href: 'https://institutoepigenetico.com/contacto' },
+  { label: 'Aviso legal', href: 'https://neurotropy.com/aviso-legal' },
+  { label: 'Términos y condiciones', href: 'https://neurotropy.com/terminos-y-condiciones' },
+  { label: 'Política de privacidad y cookies', href: 'https://neurotropy.com/politica-de-privacidad' },
+  { label: 'Contacto', href: 'https://neurotropy.com/contacto' },
 ]
 
 export default function Footer() {
@@ -95,7 +95,7 @@ export default function Footer() {
             margin: 0,
           }}
         >
-          2026 © Instituto Epigenético™
+          2026 © Neurotropy™
         </p>
       </div>
     </footer>

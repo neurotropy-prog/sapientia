@@ -431,7 +431,7 @@ export function getLandingDefaults(): CopySection[] {
       section: 'landing',
       subsection: 'footer',
       label: 'Copyright del footer',
-      defaultValue: '© 2026 Instituto Epigenético. Todos los derechos reservados.',
+      defaultValue: '© 2026 Neurotropy. Todos los derechos reservados.',
       fieldType: 'short',
       hint: 'Línea de copyright al final de la página.',
     },

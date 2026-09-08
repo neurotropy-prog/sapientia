@@ -1,23 +1,19 @@
 /**
  * /api/test-corto — Recibe respuestas del test corto y clasifica al lead.
  *
- * Body:
- *   { email, p1, p2, p3, p4, p5? }
+ * Identidad del lead (al menos uno de los dos debe llegar):
+ *   - `ref`: hash opaco de la URL `?ref=<hash>` → cruza con sapientia.leads para email
+ *   - `email`: directo (form lo pide cuando no hay ref)
+ *   - `whatsapp`: opcional, segundo canal
  *
- * Respuesta:
- *   { ok: true, result: BucketResult }
+ * Schema: sapientia (dentro del proyecto Supabase flow). Tablas implicadas:
+ *   - sapientia.leads (ref → email, poblado al importar los 8.311 leads del test largo)
+ *   - sapientia.short_test_responses (donde se persisten las respuestas)
  *
  * Side-effects:
- *   1. Inserta fila en Supabase tabla `short_test_responses` (idempotente por email).
- *   2. Añade el contacto a la audiencia Resend correspondiente al bucket.
- *   3. Dispara el primer email de la secuencia (Day 0) vía Resend.
- *
- * Variables de entorno requeridas:
- *   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY,
- *   RESEND_API_KEY,
- *   RESEND_AUDIENCE_ANSIEDAD, RESEND_AUDIENCE_INSOMNIO,
- *   RESEND_AUDIENCE_FATIGA, RESEND_AUDIENCE_ESTRES,
- *   RESEND_FROM (ej. "Instituto Epigenético <hola@mail.institutoepigenetico.com>")
+ *   1. Upsert en sapientia.short_test_responses identificado por email (preferente) o whatsapp.
+ *   2. Si email conocido: añadir el contacto a la audiencia Resend + Day 0.
+ *   3. Si solo whatsapp: solo se guarda; el follow-up sale por WhatsApp (manual u otro canal).
  */
 
 import { NextResponse } from 'next/server'
@@ -32,10 +28,12 @@ import {
 export const runtime = 'nodejs'
 
 interface RequestBody {
-  whatsapp: string
-  /** Email opcional — el lead viene del DB de leads del test largo, ya tenemos el email
-   *  asociado al WhatsApp en el matching posterior. Si se pasa, se persiste. */
+  /** Hash opaco del lead (de la URL ?ref=). Si se pasa, se cruza con sapientia.leads. */
+  ref?: string
+  /** Email directo (cuando no hay ref). */
   email?: string
+  /** WhatsApp opcional, segundo canal. */
+  whatsapp?: string
   p1: 'A' | 'B' | 'C' | 'D' | 'E'
   p2: 'A' | 'B' | 'C' | 'D' | 'E'
   p3: 'A' | 'B' | 'C' | 'D' | 'E'
@@ -71,42 +69,66 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: 'invalid_json' }, { status: 400 })
   }
 
-  // Validación
-  if (typeof body.whatsapp !== 'string' || !isWhatsAppValid(body.whatsapp)) {
-    return NextResponse.json({ ok: false, error: 'invalid_whatsapp' }, { status: 400 })
-  }
-  if (body.email !== undefined && !isEmailValid(body.email)) {
-    return NextResponse.json({ ok: false, error: 'invalid_email' }, { status: 400 })
-  }
+  // Validación de respuestas
   for (const k of ['p1', 'p2', 'p3', 'p4'] as const) {
     if (!isOptId(body[k])) {
       return NextResponse.json({ ok: false, error: `invalid_${k}` }, { status: 400 })
     }
   }
-  const p5 = typeof body.p5 === 'string' ? body.p5.slice(0, 200) : undefined
-  const whatsapp = normalizeWhatsApp(body.whatsapp)
-  const email = body.email?.trim().toLowerCase()
 
+  // Validación de identidad
+  const ref = typeof body.ref === 'string' && body.ref.trim() ? body.ref.trim() : undefined
+  const whatsappRaw = typeof body.whatsapp === 'string' && body.whatsapp.trim() ? body.whatsapp : undefined
+  let email = body.email?.trim().toLowerCase()
+
+  if (email && !isEmailValid(email)) {
+    return NextResponse.json({ ok: false, error: 'invalid_email' }, { status: 400 })
+  }
+  if (whatsappRaw && !isWhatsAppValid(whatsappRaw)) {
+    return NextResponse.json({ ok: false, error: 'invalid_whatsapp' }, { status: 400 })
+  }
+  const whatsapp = whatsappRaw ? normalizeWhatsApp(whatsappRaw) : undefined
+
+  const p5 = typeof body.p5 === 'string' ? body.p5.slice(0, 200) : undefined
   const answers: ShortTestAnswers = { p1: body.p1, p2: body.p2, p3: body.p3, p4: body.p4, p5 }
   const result = classify(answers)
 
-  // 1. Persistencia (Supabase). Si falla, devolvemos el resultado igual.
-  //    Clave primaria de unicidad: whatsapp (un lead, una fila — la última gana).
-  //    Schema dedicado `sapientia` en el proyecto Supabase `flow` para aislar
-  //    completamente del resto de tablas que ese proyecto pueda tener.
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: { persistSession: false },
+      db: { schema: 'sapientia' },
+    },
+  )
+
+  // Si hay ref, cruzar con sapientia.leads para obtener email (no machaca un email que ya viniera explícito)
+  if (ref && !email) {
+    try {
+      const { data: lead } = await supabase
+        .from('leads')
+        .select('email')
+        .eq('ref', ref)
+        .maybeSingle()
+      if (lead?.email) email = lead.email.toLowerCase()
+    } catch (e) {
+      console.error('[test-corto] lead_lookup_error', e)
+    }
+  }
+
+  // Identidad mínima: email o whatsapp
+  if (!email && !whatsapp) {
+    return NextResponse.json({ ok: false, error: 'identity_required' }, { status: 400 })
+  }
+
+  // 1. Persistencia con identidad flexible.
+  //    onConflict por la columna que sea identidad primaria — preferimos email.
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      {
-        auth: { persistSession: false },
-        db: { schema: 'sapientia' },
-      },
-    )
+    const onConflictColumn = email ? 'email' : 'whatsapp'
     await supabase.from('short_test_responses').upsert(
       {
-        whatsapp,
         email: email ?? null,
+        whatsapp: whatsapp ?? null,
         p1: body.p1, p2: body.p2, p3: body.p3, p4: body.p4,
         p5,
         bucket: result.bucket,
@@ -117,7 +139,7 @@ export async function POST(req: Request) {
         secondary_buckets: result.secondary,
         created_at: new Date().toISOString(),
       },
-      { onConflict: 'whatsapp' },
+      { onConflict: onConflictColumn },
     )
   } catch (e) {
     console.error('[test-corto] supabase_error', e)
@@ -135,11 +157,11 @@ export async function POST(req: Request) {
           audienceId: RESEND_AUDIENCE_ID,
           unsubscribed: false,
           // @ts-expect-error — properties soportado en API actual de Resend, no tipado en el SDK
-          properties: { bucket: result.bucket, whatsapp },
+          properties: { bucket: result.bucket, whatsapp: whatsapp ?? '' },
         })
       }
       await resend.emails.send({
-        from: process.env.RESEND_FROM ?? 'Instituto Epigenético <hola@institutoepigenetico.com>',
+        from: process.env.RESEND_FROM ?? 'Neurotropy <hola@neurotropy.com>',
         to: email,
         subject: SUBJECT_BY_BUCKET[result.bucket],
         html: bodyHtml(result.bucket),
@@ -208,7 +230,7 @@ function bodyHtml(bucket: Bucket): string {
     <p style="margin: 0 0 18px;">Hola,</p>
 ${body}
     <p style="margin: 24px 0 4px;">Un abrazo,</p>
-    <p style="margin: 0;"><strong>Javier Martín</strong><br/><span style="color: #5a6e63;">Instituto Epigenético</span></p>
+    <p style="margin: 0;"><strong>Javier Martín</strong><br/><span style="color: #5a6e63;">Neurotropy</span></p>
   </body>
 </html>`
 }

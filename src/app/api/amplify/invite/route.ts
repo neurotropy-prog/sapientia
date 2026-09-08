@@ -111,7 +111,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       if (error) console.error('[amplify/invite] Error updating meta counter:', error)
     })
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://lars.institutoepigenetico.com'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://lars.neurotropy.com'
   const inviteUrl = `${baseUrl}/?ref=${inviteHash}`
 
   return NextResponse.json({ invite_hash: inviteHash, invite_url: inviteUrl })

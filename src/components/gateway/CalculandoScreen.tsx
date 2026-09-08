@@ -60,7 +60,7 @@ export default function CalculandoScreen({ onComplete }: CalculandoScreenProps) 
           width: '48px',
           height: '48px',
           borderRadius: '50%',
-          border: '2px solid rgba(38,66,51,0.08)',
+          border: '2px solid rgba(50, 66, 55,0.08)',
           borderTopColor: 'var(--color-accent)',
           marginBottom: 'var(--space-4)',
           animation: 'spin 1s linear infinite',

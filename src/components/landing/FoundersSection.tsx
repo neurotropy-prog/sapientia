@@ -94,7 +94,7 @@ export default function FoundersSection() {
             ...stagger(0),
           }}
         >
-          Los fundadores del Instituto Epigenético™
+          Los fundadores de Neurotropy™
         </h2>
 
         {/* Founder cards — side by side on desktop, stacked on mobile */}

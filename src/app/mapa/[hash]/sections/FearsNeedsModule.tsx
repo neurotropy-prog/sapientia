@@ -47,7 +47,7 @@ function AccordionButton({
         justifyContent: 'space-between',
         background: 'transparent',
         border: 'none',
-        borderTop: isFirst ? 'none' : '1px solid rgba(38, 66, 51, 0.08)',
+        borderTop: isFirst ? 'none' : '1px solid rgba(50, 66, 55, 0.08)',
         fontFamily: 'var(--font-host-grotesk)',
         fontSize: 'var(--text-body-sm)',
         fontWeight: 600,
@@ -199,7 +199,7 @@ export default function FearsNeedsModule({ archetype, isNew, allCollapsed }: Fea
       <div
         style={{
           height: '1px',
-          background: 'rgba(38, 66, 51, 0.08)',
+          background: 'rgba(50, 66, 55, 0.08)',
           marginBottom: 'var(--space-2)',
         }}
       />

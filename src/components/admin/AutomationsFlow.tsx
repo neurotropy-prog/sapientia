@@ -186,7 +186,7 @@ const ACTION_EMAILS: ActionEmailMeta[] = [
     type: 'manual_email',
     name: 'Email manual',
     icon: '📧',
-    subject: 'Un mensaje del Instituto Epigenético',
+    subject: 'Un mensaje de Neurotropy',
     description:
       'Email completamente libre — Javier escribe el contenido directamente desde el formulario de acción. Sin template fijo.',
     cta: 'Ver mi mapa',
@@ -234,17 +234,17 @@ function ActionFlowNode({ action }: { action: ActionEmailMeta }) {
           position: 'relative',
         }}
       >
-        <div style={{ width: '2px', height: '24px', background: 'rgba(38, 66, 51, 0.20)' }} />
+        <div style={{ width: '2px', height: '24px', background: 'rgba(50, 66, 55, 0.20)' }} />
         <div
           style={{
             width: '12px',
             height: '12px',
             borderRadius: '50%',
-            background: 'var(--color-primary, #264233)',
+            background: 'var(--color-primary, #324237)',
             flexShrink: 0,
           }}
         />
-        <div style={{ width: '2px', flex: 1, background: 'rgba(38, 66, 51, 0.20)' }} />
+        <div style={{ width: '2px', flex: 1, background: 'rgba(50, 66, 55, 0.20)' }} />
       </div>
 
       {/* Content card */}
@@ -274,8 +274,8 @@ function ActionFlowNode({ action }: { action: ActionEmailMeta }) {
               fontFamily: 'var(--font-host-grotesk)',
               fontSize: '11px',
               fontWeight: 600,
-              color: 'var(--color-primary, #264233)',
-              background: 'rgba(38, 66, 51, 0.08)',
+              color: 'var(--color-primary, #324237)',
+              background: 'rgba(50, 66, 55, 0.08)',
               padding: '3px 10px',
               borderRadius: '100px',
               whiteSpace: 'nowrap',
@@ -330,7 +330,7 @@ function ActionFlowNode({ action }: { action: ActionEmailMeta }) {
             fontFamily: 'var(--font-host-grotesk)',
             fontSize: '13px',
             fontWeight: 500,
-            color: 'var(--color-primary, #264233)',
+            color: 'var(--color-primary, #324237)',
             display: 'flex',
             alignItems: 'center',
             gap: '4px',
@@ -403,8 +403,8 @@ function ActionFlowNode({ action }: { action: ActionEmailMeta }) {
                     fontFamily: 'var(--font-host-grotesk)',
                     fontSize: '13px',
                     fontWeight: 600,
-                    color: 'var(--color-primary, #264233)',
-                    background: 'rgba(38, 66, 51, 0.08)',
+                    color: 'var(--color-primary, #324237)',
+                    background: 'rgba(50, 66, 55, 0.08)',
                     padding: '2px 10px',
                     borderRadius: '100px',
                   }}

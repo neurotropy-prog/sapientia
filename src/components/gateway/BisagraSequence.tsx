@@ -291,7 +291,7 @@ export default function BisagraSequence({ scores, onContinue }: { scores: Dimens
         className="bisagra-box"
         style={{
           background: 'var(--color-bg-secondary)',
-          border: '1px solid rgba(38,66,51,0.18)',
+          border: '1px solid rgba(50, 66, 55,0.18)',
           borderRadius: '16px',
           padding: '48px 32px',
           maxWidth: '520px',
@@ -371,7 +371,7 @@ export default function BisagraSequence({ scores, onContinue }: { scores: Dimens
           style={{
             ...fadeStyle(showBenchmark),
             height: '1px',
-            background: 'rgba(38,66,51,0.18)',
+            background: 'rgba(50, 66, 55,0.18)',
             margin: '0 0 var(--space-5)',
           }}
         />

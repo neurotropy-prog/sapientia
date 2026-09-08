@@ -118,7 +118,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   // ── Email al invitador (fire-and-forget) ──────────────────────────────────
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://lars.institutoepigenetico.com'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://lars.neurotropy.com'
   const compareUrl = `${baseUrl}/mapa/${inviter.hash}/comparar/${compareHash}`
 
   /** Extraer iniciales del invitado */

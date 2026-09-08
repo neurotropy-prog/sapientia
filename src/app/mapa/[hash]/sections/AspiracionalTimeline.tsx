@@ -183,7 +183,7 @@ export default function AspiracionalTimeline({
               display: 'flex',
               borderRadius: '20px',
               overflow: 'hidden',
-              border: '1px solid rgba(38, 66, 51, 0.15)',
+              border: '1px solid rgba(50, 66, 55, 0.15)',
               fontSize: 'var(--text-caption)',
               fontFamily: 'var(--font-host-grotesk)',
               fontWeight: 600,
@@ -198,7 +198,7 @@ export default function AspiracionalTimeline({
                 padding: '4px 10px',
                 border: 'none',
                 cursor: 'pointer',
-                background: currency === 'eur' ? 'rgba(38,66,51,0.08)' : 'transparent',
+                background: currency === 'eur' ? 'rgba(50, 66, 55,0.08)' : 'transparent',
                 color: currency === 'eur' ? 'var(--color-text-primary)' : 'var(--color-text-tertiary)',
                 transition: 'all 200ms ease',
               }}
@@ -213,9 +213,9 @@ export default function AspiracionalTimeline({
                 gap: '4px',
                 padding: '4px 10px',
                 border: 'none',
-                borderLeft: '1px solid rgba(38, 66, 51, 0.15)',
+                borderLeft: '1px solid rgba(50, 66, 55, 0.15)',
                 cursor: 'pointer',
-                background: currency === 'mxn' ? 'rgba(38,66,51,0.08)' : 'transparent',
+                background: currency === 'mxn' ? 'rgba(50, 66, 55,0.08)' : 'transparent',
                 color: currency === 'mxn' ? 'var(--color-text-primary)' : 'var(--color-text-tertiary)',
                 transition: 'all 200ms ease',
               }}
@@ -268,7 +268,7 @@ export default function AspiracionalTimeline({
               }}
             >
               <p style={{ color: '#c27d70', margin: 0 }}>Tu cuerpo no está roto. Está harto.</p>
-              <p style={{ color: '#264233', margin: 0 }}>Es el desgaste de una biología que ha llegado a su límite.</p>
+              <p style={{ color: '#324237', margin: 0 }}>Es el desgaste de una biología que ha llegado a su límite.</p>
             </div>
 
             {/* BLOQUE D — Reencuadre de precio */}

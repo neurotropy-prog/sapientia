@@ -404,7 +404,7 @@ export default function MapaClient({
 
     ctx.fillStyle = '#6B7572'
     ctx.font = '400 12px system-ui, sans-serif'
-    ctx.fillText('Instituto Epigenético · Calibrado con +25.000 evaluaciones', 40, 112)
+    ctx.fillText('Neurotropy · Calibrado con +25.000 evaluaciones', 40, 112)
 
     ctx.strokeStyle = 'rgba(255,255,255,0.08)'
     ctx.lineWidth = 1

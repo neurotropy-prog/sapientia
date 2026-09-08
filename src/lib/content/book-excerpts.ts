@@ -5,7 +5,7 @@
  * "Burnout Ejecutivo: El Renacimiento del Líder Fénix" (Vol. 1)
  *
  * Contenido real proporcionado por Javier A. Martín Ramos.
- * © Instituto Epigenético
+ * © Neurotropy
  */
 
 import type { DimensionKey } from '@/lib/insights'
