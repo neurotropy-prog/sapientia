@@ -161,7 +161,7 @@ export async function POST(req: Request) {
         })
       }
       await resend.emails.send({
-        from: process.env.RESEND_FROM ?? 'Neurotropy <hola@neurotropy.com>',
+        from: process.env.RESEND_FROM ?? 'Neurotropy <regulacion@neurotropy.com>',
         to: email,
         subject: SUBJECT_BY_BUCKET[result.bucket],
         html: bodyHtml(result.bucket),
