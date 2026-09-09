@@ -395,7 +395,7 @@ export default function SuccessClient({ hash, email, sessionId }: Props) {
               color: 'var(--color-text-tertiary)',
               marginTop: 'var(--space-3)',
             }}>
-              ¿No llega? Revisa spam o escribe a soporte@neurotropy.com
+              ¿No llega? Revisa spam o escribe a ayuda@neurotropy.com
             </p>
           </div>
 
