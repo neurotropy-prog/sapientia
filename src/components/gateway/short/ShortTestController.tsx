@@ -12,8 +12,8 @@
  * Identidad:
  *   - Si la URL trae `?ref=<hash>`, ya conocemos el email del lead vía sapientia.leads.
  *     El paso de email se salta — pasamos directo a WhatsApp.
- *   - Si no hay ref, pedimos email (obligatorio) y luego WhatsApp (opcional).
- *   - WhatsApp siempre tiene "Saltar"; el test se guarda igual con la identidad que tengamos.
+ *   - Si no hay ref, pedimos email (obligatorio) y luego WhatsApp (obligatorio).
+ *   - WhatsApp es obligatorio siempre (decisión de Javier, sep 2026): sin opción de saltar.
  *
  * Idioma: hablamos siempre de "recomendaciones", nunca de "resultado" — con 4 preguntas
  *         no se entrega diagnóstico, se entregan pistas para el siguiente paso.
@@ -189,6 +189,10 @@ export default function ShortTestController() {
     // Identidad: ref (URL) OR email (form) OR whatsapp (form)
     if (!ref && !effectiveEmail && !effectiveWhatsapp) {
       setError('Necesitamos al menos un email o un WhatsApp para enviarte las recomendaciones')
+      return
+    }
+    if (!effectiveWhatsapp) {
+      setError('Necesitamos tu WhatsApp para enviarte las recomendaciones')
       return
     }
     if (effectiveEmail && !isEmailValid(effectiveEmail)) {
@@ -390,7 +394,6 @@ export default function ShortTestController() {
               error={error}
               submitting={submitting}
               onSubmit={() => submit()}
-              onSkip={() => submit(null)}
             />
           )}
 
@@ -466,14 +469,13 @@ function EmailStep({
 }
 
 function WhatsAppStep({
-  value, onChange, error, submitting, onSubmit, onSkip,
+  value, onChange, error, submitting, onSubmit,
 }: {
   value: string
   onChange: (v: string) => void
   error: string | null
   submitting: boolean
   onSubmit: () => void
-  onSkip: () => void
 }) {
   const valid = isWhatsAppValid(value)
   return (
@@ -500,9 +502,6 @@ function WhatsAppStep({
         onClick={onSubmit}
       >
         {submitting ? 'Enviando…' : 'Unirme al grupo'}
-      </button>
-      <button onClick={onSkip} disabled={submitting} style={skipButton}>
-        Por ahora no — ver mis recomendaciones
       </button>
       <div style={{ height: '60px' }} />
     </div>

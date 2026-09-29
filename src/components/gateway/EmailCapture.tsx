@@ -38,6 +38,14 @@ function isEmailValid(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
 }
 
+function normalizeWhatsApp(phone: string): string {
+  return phone.replace(/[\s\-().]/g, '')
+}
+
+function isWhatsAppValid(phone: string): boolean {
+  return /^\+?\d{9,15}$/.test(normalizeWhatsApp(phone))
+}
+
 interface EmailCaptureProps {
   scores: DimensionScores
   onComplete: (email: string, whatsapp?: string) => void
@@ -47,18 +55,23 @@ export default function EmailCapture({ scores, onComplete }: EmailCaptureProps) 
   const [email, setEmail]           = useState('')
   const [whatsapp, setWhatsapp]     = useState('')
   const [touched, setTouched]       = useState(false)
+  const [phoneTouched, setPhoneTouched] = useState(false)
   const [isSubmitting, setSubmitting] = useState(false)
 
-  const valid = isEmailValid(email)
-  const showError = touched && email.length > 0 && !valid
+  const emailValid = isEmailValid(email)
+  const phoneValid = isWhatsAppValid(whatsapp)
+  const valid = emailValid && phoneValid
+  const showError = touched && email.length > 0 && !emailValid
+  const showPhoneError = phoneTouched && !phoneValid
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault()
       setTouched(true)
+      setPhoneTouched(true)
       if (!valid || isSubmitting) return
       setSubmitting(true)
-      onComplete(email.trim(), whatsapp.trim() || undefined)
+      onComplete(email.trim(), normalizeWhatsApp(whatsapp))
     },
     [email, whatsapp, valid, isSubmitting, onComplete]
   )
@@ -247,23 +260,26 @@ export default function EmailCapture({ scores, onComplete }: EmailCaptureProps) 
           {/* Campo WhatsApp */}
           <input
             type="tel"
-            placeholder="Tu WhatsApp (opcional)"
+            placeholder="Tu WhatsApp"
             value={whatsapp}
             onChange={(e) => setWhatsapp(e.target.value)}
+            onBlur={() => { if (whatsapp.trim()) setPhoneTouched(true) }}
             autoComplete="tel"
             inputMode="tel"
             style={{
               width: '100%',
               padding: '14px 16px',
               borderRadius: 'var(--radius-pill)',
-              border: '1px solid rgba(50, 66, 55,0.12)',
+              border: showPhoneError
+                ? '1px solid var(--color-error)'
+                : '1px solid rgba(50, 66, 55,0.12)',
               background: 'rgba(50, 66, 55,0.05)',
               color: 'var(--color-text-primary)',
               fontFamily: 'var(--font-host-grotesk)',
               fontSize: '16px',
               outline: 'none',
               transition: 'border-color 200ms ease, box-shadow 200ms ease',
-              marginBottom: 'var(--space-3)',
+              marginBottom: showPhoneError ? 'var(--space-2)' : 'var(--space-3)',
               boxSizing: 'border-box' as const,
             }}
             onFocus={(e) => {
@@ -272,9 +288,25 @@ export default function EmailCapture({ scores, onComplete }: EmailCaptureProps) 
             }}
             onBlurCapture={(e) => {
               e.currentTarget.style.boxShadow = 'none'
-              e.currentTarget.style.borderColor = 'rgba(50, 66, 55,0.12)'
+              if (!showPhoneError) {
+                e.currentTarget.style.borderColor = 'rgba(50, 66, 55,0.12)'
+              }
             }}
           />
+
+          {showPhoneError && (
+            <p
+              style={{
+                fontFamily: 'var(--font-host-grotesk)',
+                fontSize: 'var(--text-caption)',
+                color: 'var(--color-error)',
+                marginBottom: 'var(--space-3)',
+                animation: 'fade-in-quick 200ms ease',
+              }}
+            >
+              Necesitamos tu WhatsApp completo, con prefijo de país si no es de España.
+            </p>
+          )}
 
           {/* Campo email */}
           <input
@@ -372,7 +404,7 @@ export default function EmailCapture({ scores, onComplete }: EmailCaptureProps) 
               textAlign: 'center',
             }}
           >
-            Solo email. Cero spam. Tu evaluación es confidencial.
+            Cero spam. Tu evaluación es confidencial.
           </p>
         </form>
       </div>
