@@ -293,7 +293,7 @@ export default function ShortTestController() {
                 margin: 0,
               }}
             >
-              Mapa rápido de neurorregulación
+              Test para saber apoyar tu sistema nervioso
             </p>
             {prevPhase[phase] && phase !== 'result' && (
               <button
