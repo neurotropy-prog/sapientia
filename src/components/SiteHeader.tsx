@@ -13,9 +13,11 @@ import { useState, useEffect } from 'react'
 
 interface SiteHeaderProps {
   variant?: 'default' | 'landing' | 'admin'
+  /** Marca a mostrar. 'sapientia' se usa en test.sapientianatural.com. */
+  brand?: 'neurotropy' | 'sapientia'
 }
 
-export default function SiteHeader({ variant = 'default' }: SiteHeaderProps) {
+export default function SiteHeader({ variant = 'default', brand = 'neurotropy' }: SiteHeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false)
   const [gatewayActive, setGatewayActive] = useState(false)
 
@@ -51,17 +53,32 @@ export default function SiteHeader({ variant = 'default' }: SiteHeaderProps) {
       data-variant={variant}
     >
       <div className="site-header__container">
-        <a href="/" className="site-header__logo-link" aria-label="Neurotropy — Ir al inicio">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/Logo-definitivo-IE.png"
-            alt=""
-            className="site-header__logo"
-            width={156}
-            height={28}
-            loading="eager"
-          />
-        </a>
+        {brand === 'sapientia' ? (
+          <a href="/" className="site-header__logo-link" aria-label="Sapientia — Ir al inicio">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo-sapientia.svg"
+              alt="Sapientia"
+              className="site-header__logo"
+              style={{ height: '30px' }}
+              width={130}
+              height={30}
+              loading="eager"
+            />
+          </a>
+        ) : (
+          <a href="/" className="site-header__logo-link" aria-label="Neurotropy — Ir al inicio">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/Logo-definitivo-IE.png"
+              alt=""
+              className="site-header__logo"
+              width={156}
+              height={28}
+              loading="eager"
+            />
+          </a>
+        )}
       </div>
     </header>
   )
