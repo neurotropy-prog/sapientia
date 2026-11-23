@@ -128,6 +128,8 @@ const SAPIENTIA_THEME = {
   navy: '#141B3D',
   accent: '#5566E8',
   cream: '#F6F1EA',
+  /** Verde de la barra superior de la tienda (--sap-green). */
+  green: '#9BCB5A',
   sand: '#F3EDE5',
 } as const
 
@@ -364,7 +366,7 @@ export default function ShortTestController({
               </button>
             )}
           </div>
-          <ProgressBar value={progress} label={progressLabel} barColor={isSapientia ? `linear-gradient(90deg, ${SAPIENTIA_THEME.accent}, ${SAPIENTIA_THEME.navy})` : 'linear-gradient(90deg, #2b5f3d, #2d4134)'} />
+          <ProgressBar value={progress} label={progressLabel} barColor={isSapientia ? SAPIENTIA_THEME.green : 'linear-gradient(90deg, #2b5f3d, #2d4134)'} />
         </div>
       </div>
 
