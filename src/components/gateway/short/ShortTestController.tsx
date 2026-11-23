@@ -141,7 +141,24 @@ const SAPIENTIA_VARS = {
   '--color-text-primary': SAPIENTIA_THEME.navy,
 } as React.CSSProperties
 
-export default function ShortTestController({ brand = 'neurotropy' }: { brand?: Brand }) {
+const BUCKETS = ['ansiedad', 'insomnio', 'fatiga', 'estres_cronico'] as const
+
+/** Resultado ficticio para revisar la pantalla final en vistas previas (no envía nada). */
+function previewResult(bucket?: string): BucketResult | null {
+  const b = BUCKETS.find(x => x === bucket)
+  if (!b) return null
+  return { bucket: b, scores: { ansiedad: 0, insomnio: 0, fatiga: 0, estres_cronico: 0, [b]: 4 }, secondary: [] }
+}
+
+export default function ShortTestController({
+  brand = 'neurotropy',
+  previewBucket,
+}: {
+  brand?: Brand
+  /** Solo vistas previas: abre directamente el resultado de ese bucket. */
+  previewBucket?: string
+}) {
+  const preview = previewResult(previewBucket)
   const isSapientia = brand === 'sapientia'
   const accentLabel = isSapientia ? SAPIENTIA_THEME.accent : '#CD796C'
   const buttonBg = isSapientia ? SAPIENTIA_THEME.navy : '#314135'
@@ -149,7 +166,7 @@ export default function ShortTestController({ brand = 'neurotropy' }: { brand?: 
   // ref se lee del URL una sola vez al montar; no es interactivo
   const [ref] = useState<string | undefined>(() => readRefFromUrl())
   const overlayRef = useRef<HTMLDivElement>(null)
-  const [phase, setPhase] = useState<Phase>(restored?.phase ?? 'p1')
+  const [phase, setPhase] = useState<Phase>(preview ? 'result' : restored?.phase ?? 'p1')
   const [phaseKey, setPhaseKey] = useState(0)
   const [isExiting, setIsExiting] = useState(false)
   const [answers, setAnswers] = useState<Partial<ShortTestAnswers>>(restored?.answers ?? {})
@@ -157,7 +174,7 @@ export default function ShortTestController({ brand = 'neurotropy' }: { brand?: 
   const [email, setEmail] = useState(restored?.email ?? '')
   const [whatsapp, setWhatsApp] = useState(restored?.whatsapp ?? '')
   const [submitting, setSubmitting] = useState(false)
-  const [result, setResult] = useState<BucketResult | null>(null)
+  const [result, setResult] = useState<BucketResult | null>(preview)
   const [error, setError] = useState<string | null>(null)
 
   // Si la URL trae ref, no hace falta pedir email
