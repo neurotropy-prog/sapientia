@@ -31,6 +31,8 @@ import {
   P5_QUESTION, P5_PLACEHOLDER, P5_MAX_LENGTH,
   classify,
   BUCKET_COPY,
+  SAPIENTIA_PRODUCT_BY_BUCKET,
+  SAPIENTIA_STORE_URL,
   type ShortOption,
   type ShortTestAnswers,
   type BucketResult,
@@ -118,7 +120,31 @@ function readRefFromUrl(): string | undefined {
   return undefined
 }
 
-export default function ShortTestController() {
+type Brand = 'neurotropy' | 'sapientia'
+
+/** Colores de la tienda Sapientia (sapientianatural.com): marino, acento y crema.
+ *  Se aplican como variables CSS solo cuando brand === 'sapientia'. */
+const SAPIENTIA_THEME = {
+  navy: '#141B3D',
+  accent: '#5566E8',
+  cream: '#F6F1EA',
+  sand: '#F3EDE5',
+} as const
+
+const SAPIENTIA_VARS = {
+  '--color-bg-primary': SAPIENTIA_THEME.cream,
+  '--color-bg-secondary': SAPIENTIA_THEME.sand,
+  '--bg-reveal-solid': SAPIENTIA_THEME.cream,
+  '--color-bg-elevated': '#FFFFFF',
+  '--color-accent': SAPIENTIA_THEME.accent,
+  '--color-accent-subtle': 'rgba(85, 102, 232, 0.12)',
+  '--color-text-primary': SAPIENTIA_THEME.navy,
+} as React.CSSProperties
+
+export default function ShortTestController({ brand = 'neurotropy' }: { brand?: Brand }) {
+  const isSapientia = brand === 'sapientia'
+  const accentLabel = isSapientia ? SAPIENTIA_THEME.accent : '#CD796C'
+  const buttonBg = isSapientia ? SAPIENTIA_THEME.navy : '#314135'
   const [restored] = useState(() => (typeof window !== 'undefined' ? loadSaved() : null))
   // ref se lee del URL una sola vez al montar; no es interactivo
   const [ref] = useState<string | undefined>(() => readRefFromUrl())
@@ -259,6 +285,9 @@ export default function ShortTestController() {
         overflowX: 'hidden',
         backgroundColor: getZoneBg(zone),
         transition: 'background-color 600ms var(--ease-zone)',
+        ...(isSapientia ? SAPIENTIA_VARS : {}),
+        ['--short-btn-bg' as string]: buttonBg,
+        ['--short-accent-label' as string]: accentLabel,
       }}
     >
       {/* ── Sticky header: título de sección + Volver + ProgressBar ── */}
@@ -289,7 +318,7 @@ export default function ShortTestController() {
                 fontFamily: 'var(--font-host-grotesk)',
                 fontSize: 'var(--text-body-sm)',
                 fontWeight: 500,
-                color: '#CD796C',
+                color: 'var(--short-accent-label, #CD796C)',
                 margin: 0,
               }}
             >
@@ -318,7 +347,7 @@ export default function ShortTestController() {
               </button>
             )}
           </div>
-          <ProgressBar value={progress} label={progressLabel} barColor="linear-gradient(90deg, #2b5f3d, #2d4134)" />
+          <ProgressBar value={progress} label={progressLabel} barColor={isSapientia ? `linear-gradient(90deg, ${SAPIENTIA_THEME.accent}, ${SAPIENTIA_THEME.navy})` : 'linear-gradient(90deg, #2b5f3d, #2d4134)'} />
         </div>
       </div>
 
@@ -398,7 +427,7 @@ export default function ShortTestController() {
           )}
 
           {phase === 'result' && result && (
-            <ResultStep result={result} />
+            <ResultStep result={result} brand={brand} />
           )}
         </div>
       </ZoneWrapper>
@@ -508,14 +537,15 @@ function WhatsAppStep({
   )
 }
 
-function ResultStep({ result }: { result: BucketResult }) {
+function ResultStep({ result, brand }: { result: BucketResult; brand: Brand }) {
   const copy = BUCKET_COPY[result.bucket]
+  const product = brand === 'sapientia' ? SAPIENTIA_PRODUCT_BY_BUCKET[result.bucket] : null
   return (
     <div>
       <p style={{
         fontFamily: 'var(--font-host-grotesk)',
         fontSize: 'var(--text-body-sm)',
-        color: '#CD796C',
+        color: 'var(--short-accent-label, #CD796C)',
         letterSpacing: 'var(--ls-overline)',
         textTransform: 'uppercase',
         marginBottom: 'var(--space-3)',
@@ -528,6 +558,31 @@ function ResultStep({ result }: { result: BucketResult }) {
         <p style={resultSecondary}>
           También has marcado señales fuertes en: {result.secondary.map(s => s.replace('estres_cronico', 'estrés crónico')).join(', ')}.
         </p>
+      )}
+      {product && (
+        <div style={productCard}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={product.image} alt={product.name} width={120} height={120} style={productImage} loading="eager" />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={productOverline}>Tu fórmula sugerida</p>
+            <p style={productName}>{product.name}</p>
+            <p style={productPrice}>{product.price} · 60 cápsulas</p>
+          </div>
+          <a
+            href={`${SAPIENTIA_STORE_URL}/cart/add?id=${product.variantId}&quantity=1`}
+            style={{ ...continueButton, ...productCta }}
+          >
+            Añadir al carrito →
+          </a>
+          <div style={productLinks}>
+            <a href={`${SAPIENTIA_STORE_URL}/products/${product.handle}`} style={productLink}>Ver la fórmula</a>
+            <a href={`${SAPIENTIA_STORE_URL}/collections/all`} style={productLink}>Ver todas las fórmulas</a>
+          </div>
+          <p style={productDisclaimer}>
+            Suplemento alimenticio. Este producto no es un medicamento. El consumo de este producto es
+            responsabilidad de quien lo recomienda y de quien lo usa.
+          </p>
+        </div>
       )}
       <div style={{ height: '60px' }} />
     </div>
@@ -593,7 +648,7 @@ const continueButton: React.CSSProperties = {
   padding: 'var(--space-4) var(--space-6)',
   borderRadius: 'var(--radius-lg)',
   border: 'none',
-  background: '#314135',
+  background: 'var(--short-btn-bg, #314135)',
   color: '#ffffff',
   fontFamily: 'var(--font-host-grotesk)',
   fontSize: 'var(--text-body-sm)',
@@ -654,4 +709,82 @@ const resultSecondary: React.CSSProperties = {
   fontSize: 'var(--text-body-sm)',
   color: 'var(--color-text-tertiary, var(--color-text-secondary))',
   marginTop: 'var(--space-3)',
+}
+
+// ─── Tarjeta de fórmula sugerida (solo marca Sapientia) ─────────────────────
+
+const productCard: React.CSSProperties = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  alignItems: 'center',
+  gap: 'var(--space-4)',
+  marginTop: 'var(--space-6)',
+  padding: 'var(--space-4)',
+  background: '#FFFFFF',
+  border: 'var(--border-subtle)',
+  borderRadius: 'var(--radius-lg)',
+}
+
+const productImage: React.CSSProperties = {
+  width: '120px',
+  height: '120px',
+  objectFit: 'cover',
+  borderRadius: 'var(--radius-lg)',
+  flexShrink: 0,
+}
+
+const productOverline: React.CSSProperties = {
+  fontFamily: 'var(--font-host-grotesk)',
+  fontSize: 'var(--text-body-sm)',
+  color: 'var(--short-accent-label, #CD796C)',
+  letterSpacing: 'var(--ls-overline)',
+  textTransform: 'uppercase',
+  margin: 0,
+}
+
+const productName: React.CSSProperties = {
+  fontFamily: 'var(--font-host-grotesk)',
+  fontSize: 'var(--text-h3)',
+  fontWeight: 600,
+  color: 'var(--color-text-primary)',
+  margin: 'var(--space-1) 0',
+  lineHeight: 1.25,
+}
+
+const productPrice: React.CSSProperties = {
+  fontFamily: 'var(--font-host-grotesk)',
+  fontSize: 'var(--text-body)',
+  color: 'var(--color-text-secondary)',
+  margin: 0,
+}
+
+const productCta: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  textDecoration: 'none',
+  boxSizing: 'border-box',
+  flexBasis: '100%',
+}
+
+const productLinks: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'center',
+  gap: 'var(--space-5)',
+  flexBasis: '100%',
+}
+
+const productLink: React.CSSProperties = {
+  fontFamily: 'var(--font-host-grotesk)',
+  fontSize: 'var(--text-body-sm)',
+  color: 'var(--color-text-primary)',
+}
+
+const productDisclaimer: React.CSSProperties = {
+  fontFamily: 'var(--font-host-grotesk)',
+  fontSize: '12px',
+  lineHeight: 1.4,
+  color: 'var(--color-text-tertiary, var(--color-text-secondary))',
+  margin: 0,
+  flexBasis: '100%',
 }

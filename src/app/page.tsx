@@ -19,7 +19,7 @@ export default async function Home() {
       <a href="#main-content" className="skip-link">Ir al test</a>
       <SiteHeader variant="landing" brand={brand} />
       <main id="main-content">
-        <ShortTestController />
+        <ShortTestController brand={brand} />
       </main>
     </ClientShell>
   )

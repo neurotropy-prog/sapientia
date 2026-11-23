@@ -823,6 +823,26 @@ input[type="range"]::-moz-range-track {
   text-decoration: none;
 }
 
+/* Enlace de vuelta a la tienda (solo marca Sapientia). El logo sigue centrado. */
+.site-header__container { position: relative; }
+.site-header__store-link {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-host-grotesk);
+  font-size: var(--text-body-sm);
+  color: #141B3D;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: var(--space-2) 0;
+}
+.site-header__store-link:hover { text-decoration: underline; }
+@media (max-width: 480px) {
+  .site-header__store-link { font-size: 0; }
+  .site-header__store-link::before { content: "← Tienda"; font-size: var(--text-body-sm); }
+}
+
 .site-header__logo {
   height: 34px;  /* was 24px — +40% per Javi feedback A4 */
   width: auto;

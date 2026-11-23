@@ -138,3 +138,50 @@ export const BUCKET_COPY: Record<Bucket, { headline: string; body: string }> = {
     body: 'Llevas tiempo sin poder bajar el ritmo. Te enviamos el primer paso del protocolo de neurorregulación.',
   },
 }
+
+// ─── FÓRMULA SAPIENTIA POR BUCKET (solo test.sapientianatural.com) ───────────
+// Reparto validado por Javier (23 nov 2026):
+//   ansiedad → + GABA · insomnio → Morfeo · fatiga → + Dopamina · estrés crónico → + Serotonina
+// `variantId` es la variante «60 cápsulas» en la tienda Shopify (sapientianatural.com).
+// Si cambia el precio o la variante en Shopify, hay que actualizarlo aquí.
+
+export const SAPIENTIA_STORE_URL = 'https://sapientianatural.com'
+
+export interface SapientiaProduct {
+  name: string
+  handle: string
+  variantId: string
+  price: string
+  image: string
+}
+
+export const SAPIENTIA_PRODUCT_BY_BUCKET: Record<Bucket, SapientiaProduct> = {
+  ansiedad: {
+    name: 'Sapientia + GABA',
+    handle: 'sapientia-gaba',
+    variantId: '61763034579278',
+    price: '$625.00 MXN',
+    image: 'https://cdn.shopify.com/s/files/1/1105/4835/3358/files/sapientia-gaba-final2.jpg?width=480',
+  },
+  insomnio: {
+    name: 'Sapientia Morfeo',
+    handle: 'sapientia-morfeo',
+    variantId: '61763033006414',
+    price: '$625.00 MXN',
+    image: 'https://cdn.shopify.com/s/files/1/1105/4835/3358/files/sapientia-morfeo-final2.jpg?width=480',
+  },
+  fatiga: {
+    name: 'Sapientia + Dopamina',
+    handle: 'sapientia-dopamina',
+    variantId: '61763035234638',
+    price: '$625.00 MXN',
+    image: 'https://cdn.shopify.com/s/files/1/1105/4835/3358/files/sapientia-dopamina-final.jpg?width=480',
+  },
+  estres_cronico: {
+    name: 'Sapientia + Serotonina',
+    handle: 'sapientia-serotonina',
+    variantId: '61763035169102',
+    price: '$625.00 MXN',
+    image: 'https://cdn.shopify.com/s/files/1/1105/4835/3358/files/sapientia-serotonina-final.jpg?width=480',
+  },
+}

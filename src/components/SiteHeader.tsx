@@ -11,6 +11,9 @@
 
 import { useState, useEffect } from 'react'
 
+/** Tienda Shopify de Sapientia: destino del logo y del enlace de vuelta en test.sapientianatural.com. */
+const SAPIENTIA_STORE_URL = 'https://sapientianatural.com'
+
 interface SiteHeaderProps {
   variant?: 'default' | 'landing' | 'admin'
   /** Marca a mostrar. 'sapientia' se usa en test.sapientianatural.com. */
@@ -54,7 +57,7 @@ export default function SiteHeader({ variant = 'default', brand = 'neurotropy' }
     >
       <div className="site-header__container">
         {brand === 'sapientia' ? (
-          <a href="/" className="site-header__logo-link" aria-label="Sapientia — Ir al inicio">
+          <a href={SAPIENTIA_STORE_URL} className="site-header__logo-link" aria-label="Sapientia — Volver a la tienda">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/logo-sapientia.svg"
@@ -77,6 +80,11 @@ export default function SiteHeader({ variant = 'default', brand = 'neurotropy' }
               height={28}
               loading="eager"
             />
+          </a>
+        )}
+        {brand === 'sapientia' && (
+          <a href={SAPIENTIA_STORE_URL + '/collections/all'} className="site-header__store-link">
+            ← Volver a la tienda
           </a>
         )}
       </div>
