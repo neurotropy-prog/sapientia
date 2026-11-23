@@ -601,6 +601,14 @@ function ResultStep({ result, brand }: { result: BucketResult; brand: Brand }) {
           </p>
         </div>
       )}
+      {product && result.bucket === 'insomnio' && (
+        <a href={`${SAPIENTIA_STORE_URL}/pages/curso-gratuito-del-sueno`} style={courseCard}>
+          <span style={productOverline}>Curso gratuito</span>
+          <span style={courseTitle}>Curso gratuito del sueño</span>
+          <span style={courseText}>Aprende con el Dr. Carlos Alvear, sin coste.</span>
+          <span style={courseCta}>Ver el curso →</span>
+        </a>
+      )}
       <div style={{ height: '60px' }} />
     </div>
   )
@@ -804,4 +812,39 @@ const productDisclaimer: React.CSSProperties = {
   color: 'var(--color-text-tertiary, var(--color-text-secondary))',
   margin: 0,
   flexBasis: '100%',
+}
+
+// ─── Tarjeta del curso gratuito del sueño (solo Sapientia, resultado «sueño») ─
+
+const courseCard: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 'var(--space-1)',
+  marginTop: 'var(--space-4)',
+  padding: 'var(--space-4)',
+  background: 'var(--short-btn-bg, #314135)',
+  borderRadius: 'var(--radius-lg)',
+  textDecoration: 'none',
+}
+
+const courseTitle: React.CSSProperties = {
+  fontFamily: 'var(--font-host-grotesk)',
+  fontSize: 'var(--text-h3)',
+  fontWeight: 600,
+  color: '#FFFFFF',
+  lineHeight: 1.25,
+}
+
+const courseText: React.CSSProperties = {
+  fontFamily: 'var(--font-host-grotesk)',
+  fontSize: 'var(--text-body)',
+  color: 'rgba(255, 255, 255, 0.8)',
+}
+
+const courseCta: React.CSSProperties = {
+  fontFamily: 'var(--font-host-grotesk)',
+  fontSize: 'var(--text-body-sm)',
+  fontWeight: 500,
+  color: '#FFFFFF',
+  marginTop: 'var(--space-2)',
 }
