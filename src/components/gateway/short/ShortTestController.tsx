@@ -561,6 +561,14 @@ function ResultStep({ result, brand }: { result: BucketResult; brand: Brand }) {
   const product = brand === 'sapientia' ? SAPIENTIA_PRODUCT_BY_BUCKET[result.bucket] : null
   return (
     <div>
+      {product && result.bucket === 'insomnio' && (
+        <a href={`${SAPIENTIA_STORE_URL}/pages/curso-gratuito-del-sueno`} style={{ ...courseCard, marginTop: 0, marginBottom: 'var(--space-6)' }}>
+          <span style={productOverline}>Curso gratuito</span>
+          <span style={courseTitle}>Curso gratuito del sueño</span>
+          <span style={courseText}>Aprende con el Dr. Carlos Alvear, sin coste.</span>
+          <span style={courseCta}>Ver el curso →</span>
+        </a>
+      )}
       <p style={{
         fontFamily: 'var(--font-host-grotesk)',
         fontSize: 'var(--text-body-sm)',
@@ -602,14 +610,6 @@ function ResultStep({ result, brand }: { result: BucketResult; brand: Brand }) {
             responsabilidad de quien lo recomienda y de quien lo usa.
           </p>
         </div>
-      )}
-      {product && result.bucket === 'insomnio' && (
-        <a href={`${SAPIENTIA_STORE_URL}/pages/curso-gratuito-del-sueno`} style={courseCard}>
-          <span style={productOverline}>Curso gratuito</span>
-          <span style={courseTitle}>Curso gratuito del sueño</span>
-          <span style={courseText}>Aprende con el Dr. Carlos Alvear, sin coste.</span>
-          <span style={courseCta}>Ver el curso →</span>
-        </a>
       )}
       <div style={{ height: '60px' }} />
     </div>
