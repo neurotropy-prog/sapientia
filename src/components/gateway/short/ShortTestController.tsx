@@ -337,7 +337,7 @@ export default function ShortTestController({
                 fontFamily: 'var(--font-host-grotesk)',
                 fontSize: 'var(--text-body-sm)',
                 fontWeight: 500,
-                color: 'var(--short-accent-label, #CD796C)',
+                color: isSapientia ? SAPIENTIA_THEME.green : 'var(--short-accent-label, #CD796C)',
                 margin: 0,
               }}
             >
